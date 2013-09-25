@@ -33,6 +33,13 @@ public class EuDModel extends Observable {
 
 	public  void ggt() {
 		ggt = 0;
+		int zw = 1;
+		while(zw!=0){
+			zw = a%b;
+			a = b;
+			b = zw;
+		}
+		ggt = a;
 	      setChanged();
 	      notifyObservers();
 	}
