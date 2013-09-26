@@ -1,7 +1,7 @@
 package Euklid;
 
 import java.util.Observable;
-//test test test netbook
+//test Daethyx1337 PC
 public class EuDModel extends Observable {
 		
 	int a, b, ggt;	
