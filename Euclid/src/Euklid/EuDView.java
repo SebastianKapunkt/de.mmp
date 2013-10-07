@@ -18,6 +18,7 @@ public class EuDView extends JPanel implements ActionListener, Observer {
 	JTextField a = new JTextField("",10);
 	JTextField b = new JTextField("",10);
 	JTextField g = new JTextField("",6);
+	JOptionPane error = new JOptionPane();
 
 	public EuDView(EuDModel model)  {
 		this.model = model;
@@ -25,7 +26,7 @@ public class EuDView extends JPanel implements ActionListener, Observer {
 		setBackground(Color.lightGray);
 		
 		Box box = Box.createVerticalBox();
-		box.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 50));
+		box.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 50));
 		JLabel label1 = new JLabel("  a");
 		label1.setAlignmentY(TOP_ALIGNMENT);
 		box.add(label1);
@@ -50,24 +51,47 @@ public class EuDView extends JPanel implements ActionListener, Observer {
 		g.setAlignmentX(LEFT_ALIGNMENT);
 		g.setEditable(false);
 		box2.add(g);
-		add(box2);		
-
+		add(box2);
+		
 	}
 
-	private void readInput(){
+	private void readInput() throws NegativeNumberException{
 		try {
+			if(Integer.valueOf(a.getText()) < 0 || Integer.valueOf(b.getText()) < 0){
+				throw new NegativeNumberException();
+			}
 			model.setA(Integer.valueOf(a.getText()));
 			model.setB(Integer.valueOf(b.getText()));
-			model.ggt();
-		} catch (NumberFormatException nfe) {
-			JOptionPane.showMessageDialog(this,
-					"Falsches Zahlenformat","Eingabefehler",JOptionPane.ERROR_MESSAGE);
-		} 		
+			try{
+				model.ggt();
+			}catch (ArithmeticException e){
+				JOptionPane.showMessageDialog(this,"ggt(0,0) ist undefiniert","Mathematisches Problem",JOptionPane.ERROR_MESSAGE);
+				model.zw = 0;
+				a.setText("");
+				b.setText("");
+				g.setText("");
+			}
+		}catch (NumberFormatException nfe) {
+			JOptionPane.showMessageDialog(this,"Falsches Zahlenformat","Eingabefehler",JOptionPane.ERROR_MESSAGE);
+			a.setText("");
+			b.setText("");
+			g.setText("");
+		} 
+				
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() == compute) readInput();
+		if (e.getSource() == compute){
+			try {
+				readInput();
+			} catch (NegativeNumberException e1) {
+				JOptionPane.showMessageDialog(this,"Negative Zahl(en)","Eingabefehler",JOptionPane.ERROR_MESSAGE);
+				a.setText("");
+				b.setText("");
+				g.setText("");
+			}
+		}
 	}
 
 	@Override

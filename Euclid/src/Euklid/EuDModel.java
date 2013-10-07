@@ -1,11 +1,11 @@
 package Euklid;
 
 import java.util.Observable;
-//test test 2
+
 public class EuDModel extends Observable {
 		
-	int a, b, ggt;	
-	
+	int a, b, zw, ggt;	
+	EuDView view;
 	
 	public void setA(int a) {
 		this.a = a;
@@ -32,8 +32,12 @@ public class EuDModel extends Observable {
 	}
 
 	public  void ggt() {
+		if(a!=0 && b==0){
+			b = a;
+			a = 0;
+		}
 		ggt = 0;
-		int zw = 1;
+		zw = 1;
 		while(zw!=0){
 			zw = a%b;
 			a = b;
