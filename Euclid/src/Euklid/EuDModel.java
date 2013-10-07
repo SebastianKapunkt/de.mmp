@@ -5,7 +5,6 @@ import java.util.Observable;
 public class EuDModel extends Observable {
 		
 	int a, b, zw, ggt;	
-	EuDView view;
 	
 	public void setA(int a) {
 		this.a = a;
