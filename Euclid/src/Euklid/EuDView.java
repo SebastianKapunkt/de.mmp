@@ -7,6 +7,8 @@ import java.util.Observer;
 
 import javax.swing.*;
 
+import Euklid.Exception.NegativeNumberException;
+
 public class EuDView extends JPanel implements ActionListener, Observer {
 
 	private static final long serialVersionUID = 1L;
@@ -18,7 +20,8 @@ public class EuDView extends JPanel implements ActionListener, Observer {
 	JTextField a = new JTextField("",10);
 	JTextField b = new JTextField("",10);
 	JTextField g = new JTextField("",6);
-	JOptionPane error = new JOptionPane();
+	JTextField x = new JTextField("",6);
+	JTextField y = new JTextField("",6);
 
 	public EuDView(EuDModel model)  {
 		this.model = model;
@@ -44,6 +47,23 @@ public class EuDView extends JPanel implements ActionListener, Observer {
 		box.add(compute);
 		add(box);		
 		
+		Box box3 = Box.createVerticalBox();
+		box3.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+		JLabel label2 = new JLabel("Bézout-Koeffizienten");
+		label2.setAlignmentY(TOP_ALIGNMENT);
+		box3.add(label2);		
+		box3.add(Box.createVerticalStrut(5));
+		x.setAlignmentX(LEFT_ALIGNMENT);
+		x.setEditable(false);
+		box3.add(new JLabel("x"));	
+		box3.add(x);
+		box3.add(Box.createVerticalStrut(5));
+		y.setAlignmentX(LEFT_ALIGNMENT);
+		y.setEditable(false);
+		box3.add(new JLabel("y"));	
+		box3.add(y);
+		add(box3);
+		
 		Box box2 = Box.createVerticalBox();
 		box2.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 		box2.add(new JLabel("  ggt"));		
@@ -52,51 +72,51 @@ public class EuDView extends JPanel implements ActionListener, Observer {
 		g.setEditable(false);
 		box2.add(g);
 		add(box2);
-		
 	}
 
-	private void readInput() throws NegativeNumberException{
+	private void readInput() {
 		try {
-			if(Integer.valueOf(a.getText()) < 0 || Integer.valueOf(b.getText()) < 0){
-				throw new NegativeNumberException();
-			}
+			
 			model.setA(Integer.valueOf(a.getText()));
 			model.setB(Integer.valueOf(b.getText()));
-			try{
-				model.ggt();
-			}catch (ArithmeticException e){
-				JOptionPane.showMessageDialog(this,"ggt(0,0) ist undefiniert","Mathematisches Problem",JOptionPane.ERROR_MESSAGE);
-				model.zw = 0;
-				a.setText("");
-				b.setText("");
-				g.setText("");
-			}
+			model.ggt();
+			
+		}catch (ArithmeticException e){
+			JOptionPane.showMessageDialog(this,"ggt(0,0) ist undefiniert","Mathematisches Problem",JOptionPane.ERROR_MESSAGE);
+			clear();
+		
 		}catch (NumberFormatException nfe) {
 			JOptionPane.showMessageDialog(this,"Falsches Zahlenformat","Eingabefehler",JOptionPane.ERROR_MESSAGE);
-			a.setText("");
-			b.setText("");
-			g.setText("");
+			clear();
+		
 		} 
+		catch (NegativeNumberException e1) {
+			JOptionPane.showMessageDialog(this,e1.getMessage(),"Eingabefehler",JOptionPane.ERROR_MESSAGE);
+			clear();
+		}
 				
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() == compute){
-			try {
-				readInput();
-			} catch (NegativeNumberException e1) {
-				JOptionPane.showMessageDialog(this,"Negative Zahl(en)","Eingabefehler",JOptionPane.ERROR_MESSAGE);
-				a.setText("");
-				b.setText("");
-				g.setText("");
-			}
+		if (e.getSource() == compute){ 
+				readInput();	
 		}
 	}
+		
 
 	@Override
 	public void update(Observable arg0, Object arg1) {
 		g.setText(model.getGgt()+"");
+		x.setText(model.getX()+"");
+		y.setText(model.getY()+"");
+	}
+	public void clear(){
+		a.setText("");
+		b.setText("");
+		g.setText("");
+		x.setText("");
+		y.setText("");
 	}
 }
 
