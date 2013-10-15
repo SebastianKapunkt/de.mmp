@@ -1,3 +1,10 @@
+/*
+ * Autoren:
+ * Eric Dobritius 20110009
+ * Gorden Just 
+ * Sebastian Kindt 20120023
+ */
+
 package Euklid;
 
 import java.awt.event.*;
