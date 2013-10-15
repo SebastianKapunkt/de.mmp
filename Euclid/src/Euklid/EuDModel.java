@@ -40,27 +40,6 @@ public class EuDModel extends Observable {
 		a = 0;
 		b = 0;
 	}
-/**
- * BRAUCHT KEINER MEHR
- * @throws NegativeNumberException
- * @throws ArithmeticException
- */
-//	public  void ggt() {
-//		if(a!= 0 && b == 0){
-//			b = a;
-//			a = 0;
-//		}
-//		ggt = 0;
-//		zw = 1;
-//		while(zw!=0){
-//			zw = a%b;
-//			a = b;
-//			b = zw;
-//		}
-//		ggt = a;
-//	      setChanged();
-//	      notifyObservers();
-//	}
 	
 	public void ggt() throws NegativeNumberException, ArithmeticException{
 		int rk=0, rk1, rk2, q, xk=0, xk1=0, xk2=1, yk=0, yk1=1, yk2=0;
@@ -69,15 +48,25 @@ public class EuDModel extends Observable {
 			b = a;
 			a = 0;
 		}
+		// ggt(0,0) abfangen
 		if (a == 0 && b == 0){
 			throw new ArithmeticException(); 
-		} else if (a < 0 || b < 0){
+		} 
+		// Negative Zahlen
+		else if (a < 0 || b < 0){
 			throw new NegativeNumberException();
 		} else {
+			//Start Variablen setzen
 			rk2=a;
 			rk1=b;
 		}
-		
+		/*
+		 * rk = current position
+		 * rk1 = rk-1 one position above
+		 * rk2 = rk-2 two position above
+		 * 
+		 * same @ y, x
+		 */
 		do {
 			rk = rk2 % rk1;
 			q = rk2 / rk1;
