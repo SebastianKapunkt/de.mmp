@@ -53,6 +53,13 @@ public class KgView extends JPanel implements ActionListener, Observer{
 		box.add(Box.createVerticalStrut(5));
 		box.add(clearc);
 		add(box);
+
+		Box box3 = Box.createVerticalBox();
+		box3.setBorder(BorderFactory.createEmptyBorder(20,20,20,50));
+		JLabel label3 = new JLabel(" key");
+		box3.add(label3);
+		box3.add(key);
+		add(box3);
 		
 		Box box2 = Box.createVerticalBox();
 		box2.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 50));
