@@ -4,6 +4,10 @@ import java.util.Observable;
 
 import Euklid.Exception.NegativeNumberException;
 
+/**
+ * stellt die Funktion zur Berechnung des größten gemeinsamen Teilers bereit
+ *
+ */
 public class EuDModel extends Observable {
 		
 	int a, b, zw, ggt, x, y;	
@@ -41,6 +45,13 @@ public class EuDModel extends Observable {
 		b = 0;
 	}
 	
+	/**
+	 * @throws NegativeNumberException
+	 * @throws ArithmeticException
+	 * 
+	 * berechnet den ggT zweier Zahlen, überprüft dabei an Hand der Exceptions ob diese positiv sind
+	 * und mindestens eine der Zahlen von 0 verschieden ist
+	 */
 	public void ggt() throws NegativeNumberException, ArithmeticException{
 		int rk=0, rk1, rk2, q, xk=0, xk1=0, xk2=1, yk=0, yk1=1, yk2=0;
 		
@@ -63,9 +74,9 @@ public class EuDModel extends Observable {
 		/*
 		 * rk = current position
 		 * rk1 = rk-1 one position above
-		 * rk2 = rk-2 two position above
+		 * rk2 = rk-2 two positions above
 		 * 
-		 * same @ y, x
+		 * same for x and y
 		 */
 		do {
 			rk = rk2 % rk1;

@@ -9,12 +9,15 @@ import javax.swing.*;
 
 import Euklid.Exception.NegativeNumberException;
 
+/**
+ * Erstellt das GUI, überprüft die Eingabe und zeigt das Ergebnis der Berechnung des Models an
+ * übernimmt somit die Rolle der View und des Controllers
+ */
 public class EuDView extends JPanel implements ActionListener, Observer {
 
 	private static final long serialVersionUID = 1L;
 
 	EuDModel model;
-	
 	JButton compute = new JButton("Berechnen");
 
 	JTextField a = new JTextField("",10);
@@ -74,43 +77,46 @@ public class EuDView extends JPanel implements ActionListener, Observer {
 		add(box2);
 	}
 
+	/**
+	 * Methode zur Umwandlung der beiden Input-Strings in Integer, 
+	 * die überprüft ob das Zahlenformat korrekt ist und mindestens eine Zahl von 0 verschieden ist
+	 */
 	private void readInput() {
 		try {
-			
 			model.setA(Integer.valueOf(a.getText()));
 			model.setB(Integer.valueOf(b.getText()));
 			model.ggt();
-			
 		}catch (ArithmeticException e){
 			JOptionPane.showMessageDialog(this,"ggt(0,0) ist undefiniert","Mathematisches Problem",JOptionPane.ERROR_MESSAGE);
 			clear();
-		
 		}catch (NumberFormatException nfe) {
 			JOptionPane.showMessageDialog(this,"Falsches Zahlenformat","Eingabefehler",JOptionPane.ERROR_MESSAGE);
 			clear();
-		
 		} 
 		catch (NegativeNumberException e1) {
 			JOptionPane.showMessageDialog(this,e1.getMessage(),"Eingabefehler",JOptionPane.ERROR_MESSAGE);
 			clear();
 		}
-				
 	}
 
+	//Falls die Quelle des ActionEvent der Button ist, so wird die readInput Methode ausgeführt
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == compute){ 
 				readInput();	
 		}
 	}
-		
-
+	
+	//wenn das beobachtete Objekt seinen Zustand ändert, wird die View ihre Ansicht (JTextField) aktualisieren
 	@Override
 	public void update(Observable arg0, Object arg1) {
 		g.setText(model.getGgt()+"");
 		x.setText(model.getX()+"");
 		y.setText(model.getY()+"");
 	}
+	/**
+	 * Methode zur Zurücksetzung der JTextField Elenente
+	 */
 	public void clear(){
 		a.setText("");
 		b.setText("");
