@@ -1,6 +1,7 @@
 package de.fhb.kryptografie;
 
-import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -19,8 +20,16 @@ public class KgFrame extends JFrame{
 		KgModel model = new KgModel();
 		KgView view = new KgView(model);
 		getContentPane().add(view);
+		
+
+		Dimension screenSize = new Dimension(Toolkit.getDefaultToolkit().getScreenSize());
+        setPreferredSize(new Dimension(900, 450));
+        Dimension windowSize = new Dimension(getPreferredSize());
+        int wdwLeft = screenSize.width / 2 - windowSize.width / 2;
+        int wdwTop = screenSize.height / 2 - windowSize.height / 2;
+        
 		pack();
-		setSize(900,525);
+		setLocation(wdwLeft, wdwTop);
 	}
 	
 	public static void main(String[] args){
@@ -28,3 +37,5 @@ public class KgFrame extends JFrame{
 		kf.setVisible(true);
 	}
 }
+
+

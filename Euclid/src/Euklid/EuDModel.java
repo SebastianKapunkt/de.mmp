@@ -1,7 +1,6 @@
 package Euklid;
 
 import java.util.Observable;
-
 import Euklid.Exception.NegativeNumberException;
 
 /**

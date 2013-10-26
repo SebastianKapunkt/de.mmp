@@ -1,3 +1,9 @@
+/*
+ * 
+ * Author: http://forum.chip.de/java/jtextfield-eingabezeichen-begrenzen-834905.html#post5186423
+ * 
+ */
+
 package de.fhb.kryptografie;
 import javax.swing.text.PlainDocument;
 import javax.swing.text.*;
