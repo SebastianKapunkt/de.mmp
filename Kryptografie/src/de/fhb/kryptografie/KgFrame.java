@@ -20,7 +20,7 @@ public class KgFrame extends JFrame{
 		KgView view = new KgView(model);
 		getContentPane().add(view);
 		pack();
-		setSize(900,450);
+		setSize(900,525);
 	}
 	
 	public static void main(String[] args){

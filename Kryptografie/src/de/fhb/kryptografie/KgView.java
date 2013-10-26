@@ -6,7 +6,6 @@ import java.awt.event.ActionListener;
 import java.util.Observable;
 import java.util.Observer;
 
-import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -15,79 +14,204 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import java.awt.Component;
+
+import java.awt.Dimension;
+
 public class KgView extends JPanel implements ActionListener, Observer{
 	
 	KgModel model;
+	SetMaxText maxText;
 	
-	JButton encipher = new JButton("encipher");
-	JButton decipher = new JButton("decipher");
+	JTextField keyField = new JTextField();
 	
-	JButton cleark = new JButton("clear");
-	JButton clearc = new JButton("clear");
+	JButton cypherClear = new JButton("clear");
+	JButton decypher = new JButton("decypher -->");
+	JButton encypher = new JButton("<-- encyper");
+	JButton decypherClear = new JButton("clear");
 	
-	JTextArea plainText = new JTextArea("\"plaine text\" ",15,20);
-	JTextArea cipherText = new JTextArea("\"cipher text\" ",15,20);
+	JLabel cypherLabel = new JLabel("cypher text");
+	JLabel keyLabel = new JLabel("key");
+	JLabel decypherLabel = new JLabel("decypher text");
 	
-	JScrollPane plainscroll = new JScrollPane (plainText, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-	JScrollPane cipherscroll = new JScrollPane (cipherText, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-
-	
-	
-	JTextField key = new JTextField("",5);
+	JTextArea cypherArea = new JTextArea(10,10);
+	JTextArea decypherArea = new JTextArea();
 	
 	public KgView(KgModel model) {
 		this.model = model;
 		model.addObserver(this);
 		setBackground(Color.lightGray);
 		
-		Box box = Box.createVerticalBox();
-		box.setBorder(BorderFactory.createEmptyBorder(20,20,20,50));
-			Box boxH = Box.createHorizontalBox();
-			JLabel label1 = new JLabel(" plain text");
-			boxH.add(label1);
-			boxH.add(Box.createHorizontalStrut(120));
-			boxH.add(encipher);
-			box.add(boxH);
-		box.add(Box.createVerticalStrut(5));
-		box.add(plainscroll);
-		box.add(Box.createVerticalStrut(5));
-		box.add(clearc);
-		add(box);
+		Box horizontalBox = Box.createHorizontalBox();
+		horizontalBox.setAlignmentY(Component.CENTER_ALIGNMENT);
+		add(horizontalBox);
+		
+		Box leftBox = Box.createVerticalBox();
+		horizontalBox.add(leftBox);
+		
+		Box rowOneLeftBox = Box.createHorizontalBox();
+		leftBox.add(rowOneLeftBox);
+		
+		rowOneLeftBox.add(cypherLabel);
+		
+		Component verticalStrut = Box.createVerticalStrut(40);
+		rowOneLeftBox.add(verticalStrut);
+		
+		Box rowTwoLeftBox = Box.createHorizontalBox();
+		leftBox.add(rowTwoLeftBox);
+		
+		cypherArea.setLineWrap(true);
+        cypherArea.setWrapStyleWord(true);
+        rowTwoLeftBox.add(new JScrollPane(cypherArea));
+		
+		Component verticalStrut_2 = Box.createVerticalStrut(300);
+		verticalStrut_2.setMaximumSize(new Dimension(0, 400));
+		rowTwoLeftBox.add(verticalStrut_2);
+		
+		Component horizontalStrut_3 = Box.createHorizontalStrut(300);
+		horizontalStrut_3.setMaximumSize(new Dimension(200, 0));
+		leftBox.add(horizontalStrut_3);
+		
+		Box rowThreeLeftBox = Box.createHorizontalBox();
+		leftBox.add(rowThreeLeftBox);
+		
+		cypherClear.addActionListener(this);
+		rowThreeLeftBox.add(cypherClear);
+		
+		Component horizontalGlue = Box.createHorizontalGlue();
+		rowThreeLeftBox.add(horizontalGlue);
+		
+		Box middleBox = Box.createVerticalBox();
+		horizontalBox.add(middleBox);
+		
+		Box horizontalBox_3 = Box.createHorizontalBox();
+		middleBox.add(horizontalBox_3);
+		horizontalBox_3.setMaximumSize(new Dimension(200, 200));
+		
+		Component horizontalStrut = Box.createHorizontalStrut(10);
+		horizontalStrut.setMaximumSize(new Dimension(10, 0));
+		horizontalBox_3.add(horizontalStrut);
+		
+		Box verticalBox_3 = Box.createVerticalBox();
+		horizontalBox_3.add(verticalBox_3);
+			
+		verticalBox_3.add(keyLabel);
+		
+		Component horizontalStrut_2 = Box.createHorizontalStrut(20);
+		horizontalStrut_2.setMaximumSize(new Dimension(20, 0));
+		horizontalBox_3.add(horizontalStrut_2);
+		
+		Box verticalBox_4 = Box.createVerticalBox();
+		horizontalBox_3.add(verticalBox_4);
+		keyField.setMinimumSize(new Dimension(25, 20));
+		keyField.setMaximumSize(new Dimension(2147483647, 20));
+		keyField.setColumns(15);
+		keyField.setDocument(new SetMaxText(10));
+		verticalBox_4.add(keyField);
+		
+		Component horizontalStrut_1 = Box.createHorizontalStrut(20);
+		horizontalStrut_1.setMaximumSize(new Dimension(20, 0));
+		horizontalBox_3.add(horizontalStrut_1);
+		
+		Component verticalStrut_4 = Box.createVerticalStrut(40);
+		horizontalBox_3.add(verticalStrut_4);
+		
+		Box horizontalBox_4 = Box.createHorizontalBox();
+		middleBox.add(horizontalBox_4);
+		
+		Box verticalBox_5 = Box.createVerticalBox();
+		horizontalBox_4.add(verticalBox_5);
+		
+		Component verticalGlue_1 = Box.createVerticalGlue();
+		verticalBox_5.add(verticalGlue_1);
+		
+		Box horizontalBox_7 = Box.createHorizontalBox();
+		verticalBox_5.add(horizontalBox_7);
+		decypher.addActionListener(this);
+		decypher.setMaximumSize(new Dimension(110, 23));
+		decypher.setMinimumSize(new Dimension(110, 23));
+		decypher.setPreferredSize(new Dimension(100, 23));
+		horizontalBox_7.add(decypher);
+		
+		Component verticalStrut_1 = Box.createVerticalStrut(20);
+		verticalBox_5.add(verticalStrut_1);
+		
+		Box horizontalBox_8 = Box.createHorizontalBox();
+		verticalBox_5.add(horizontalBox_8);
+		encypher.addActionListener(this);
+		encypher.setMinimumSize(new Dimension(110, 23));
+		encypher.setMaximumSize(new Dimension(110, 23));
+		encypher.setPreferredSize(new Dimension(100, 23));
+		horizontalBox_8.add(encypher);
+		
+		Component verticalGlue = Box.createVerticalGlue();
+		verticalBox_5.add(verticalGlue);
+		
+		Box rightBox = Box.createVerticalBox();
+		horizontalBox.add(rightBox);
+		
+		Box horizontalBox_5 = Box.createHorizontalBox();
+		rightBox.add(horizontalBox_5);
 
-		Box box3 = Box.createVerticalBox();
-		box3.setBorder(BorderFactory.createEmptyBorder(20,20,20,50));
-		JLabel label3 = new JLabel(" key");
-		box3.add(label3);
-		box3.add(key);
-		add(box3);
+		horizontalBox_5.add(decypherLabel);
 		
-		Box box2 = Box.createVerticalBox();
-		box2.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 50));
-			Box box2H = Box.createHorizontalBox();
-			JLabel label2 = new JLabel(" cipher text");
-			box2H.add(label2);
-			box2H.add(Box.createHorizontalStrut(120));
-			box2H.add(decipher);
-			box2.add(box2H);
-		box2.add(Box.createVerticalStrut(5));
-		box2.add(cipherscroll);
-		box2.add(Box.createVerticalStrut(5));
-		box2.add(cleark);
-		add(box2);
+		Component verticalStrut_3 = Box.createVerticalStrut(50);
+		horizontalBox_5.add(verticalStrut_3);
 		
+		Box horizontalBox_6 = Box.createHorizontalBox();
+		rightBox.add(horizontalBox_6);
 		
+		decypherArea.setLineWrap(true);
+        decypherArea.setWrapStyleWord(true);
+		horizontalBox_6.add(new JScrollPane(decypherArea));
+		
+		Component verticalStrut_5 = Box.createVerticalStrut(300);
+		verticalStrut_5.setMaximumSize(new Dimension(0, 400));
+		horizontalBox_6.add(verticalStrut_5);
+		
+		Component horizontalStrut_4 = Box.createHorizontalStrut(300);
+		horizontalStrut_4.setMaximumSize(new Dimension(200, 0));
+		rightBox.add(horizontalStrut_4);
+		
+		Box horizontalBox_9 = Box.createHorizontalBox();
+		rightBox.add(horizontalBox_9);
+		
+		decypherClear.addActionListener(this);
+		horizontalBox_9.add(decypherClear);
+		
+		Component horizontalGlue_1 = Box.createHorizontalGlue();
+		horizontalBox_9.add(horizontalGlue_1);
 	}
 
 	@Override
 	public void update(Observable arg0, Object arg1) {
-		// TODO Auto-generated method stub
-		
+		cypherArea.setText(model.getCypherText());
+		decypherArea.setText(model.getDeCypherText());
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent arg0) {
-		// TODO Auto-generated method stub
-		
+	public void actionPerformed(ActionEvent e) {
+		if(e.getSource() == cypherClear){
+			cypherArea.setText("");
+		}
+		if(e.getSource() == decypher){
+			readInputDecypherArea();
+			model.transform();;
+		}
+		if(e.getSource() == encypher){
+			readInputCypherArea();
+		}
+		if(e.getSource() == decypherClear){
+			decypherArea.setText("");
+		}
+	}
+
+	private void readInputDecypherArea() {
+		model.setDeCypherText(decypherArea.getText());
+	}
+
+	private void readInputCypherArea() {
+		model.setCypherText(cypherArea.getText());
 	}
 
 }
