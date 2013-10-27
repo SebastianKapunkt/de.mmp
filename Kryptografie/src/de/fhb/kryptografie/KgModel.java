@@ -8,115 +8,135 @@ import java.util.Observable;
 
 import de.fhb.kryptografie.exceptions.WrongNumberFormatException;
 
-
-public class KgModel extends Observable{
+public class KgModel extends Observable {
 
 	private String plainText = new String("");
 	private String cipherText = new String("");
 	private FileReader fileReader;
 	private BufferedReader bufferedReader;
 
-	
 	public String getCypherText() {
 		return plainText;
 	}
-
 
 	public void setCypherText(String plainText) {
 		this.plainText = plainText;
 	}
 
-
 	public String getDeCypherText() {
 		return cipherText;
 	}
-
 
 	public void setDeCypherText(String cypherText) {
 		this.cipherText = cypherText;
 	}
 
 	public String transform(String text) {
-		
+
 		StringBuilder myText = new StringBuilder("");
-		
+
 		for (int i = 0; i < text.length(); i++) {
-			if(text.charAt(i)>96 && text.charAt(i)<123){
-				myText.append((char) (text.charAt(i)-32));
+			if (text.charAt(i) > 96 && text.charAt(i) < 123) {
+				myText.append((char) (text.charAt(i) - 32));
 			}
-			if(text.charAt(i)>64 && text.charAt(i)<91){
+			if (text.charAt(i) > 64 && text.charAt(i) < 91) {
 				myText.append(text.charAt(i));
 			}
-			if(text.charAt(i) == 'ä' || text.charAt(i) == 'Ä'){
+			if (text.charAt(i) == 'ä' || text.charAt(i) == 'Ä') {
 				myText.append("AE");
 			}
-			if(text.charAt(i) == 'ö' || text.charAt(i) == 'Ö'){
+			if (text.charAt(i) == 'ö' || text.charAt(i) == 'Ö') {
 				myText.append("OE");
 			}
-			if(text.charAt(i) == 'ü' || text.charAt(i) == 'Ü'){
+			if (text.charAt(i) == 'ü' || text.charAt(i) == 'Ü') {
 				myText.append("UE");
 			}
-			if(text.charAt(i) == 'ß'){
+			if (text.charAt(i) == 'ß') {
 				myText.append("SS");
 			}
 		}
-		
+
 		plainText = myText.toString();
-		
+
 		return myText.toString();
 	}
 
-
-//	public void decipher(String transformed,String key) {
-//				
-//	}
-
-	public void encipher(String transformed,int key) {
+	public void encipher(String transformed, String key) {
 		StringBuilder myText = new StringBuilder("");
-		
-		for (int i = 0; i < transformed.length(); i++) {
-			if(((char)transformed.charAt(i)+key) <= 90){
-				myText.append((char) (transformed.charAt(i)+key));
-			}else if(((char)transformed.charAt(i)+key)>=90){
-				myText.append((char) (transformed.charAt(i)+key-26));
-			}else{
-				myText.append((char) (transformed.charAt(i)+key+26));
+		int j = 0;
+
+		for (int i = 0; i < transformed.length(); i++, j++) {
+			if (j == key.length()) {
+				j = 0;
+			}
+			if ((transformed.charAt(i) + key.charAt(j)) <= 90) {
+				myText.append((char) (transformed.charAt(i) + key.charAt(j)));
+			} else if (((char) transformed.charAt(i) + key.charAt(j)) >= 90) {
+				myText.append((char) (transformed.charAt(i) + key.charAt(j) - 26));
+			} else {
+				myText.append((char) (transformed.charAt(i) + key.charAt(j) + 26));
 			}
 		}
-		
+
 		cipherText = myText.toString();
-		
+
 		setChanged();
-	    notifyObservers();
+		notifyObservers();
 	}
 
-
-	public int calculateKey(String text) throws WrongNumberFormatException {
-		int key = 0;
-		key = (int) text.charAt(0);
-		if(key > 90 || key < 65){
-			throw new WrongNumberFormatException();
-		}else{
-			key = key - 65;
+	public String calculateKey(String text) throws WrongNumberFormatException {
+		StringBuilder key = new StringBuilder();
+		for (int i = 0; i < text.length(); i++) {
+			if (text.charAt(i) < 65 || text.charAt(i) > 90) {
+				throw new WrongNumberFormatException();
+			} else {
+				key.append((char) (text.charAt(i) - 64));
+			}
 		}
-		return key;
+		return key.toString();
 	}
 
-
-	public void openFile(File selectedFile) throws IOException {
-		//Öffnen und in einen String schreiben
+	public void openFile(File selectedFile, boolean plain) throws IOException {
 		fileReader = new FileReader(selectedFile);
 		bufferedReader = new BufferedReader(fileReader);
 		StringBuilder myString = new StringBuilder();
-		
-		do{ 
+
+		do {
 			myString.append(bufferedReader.readLine());
-		}while( bufferedReader.readLine() != null );		
-		
+		} while (bufferedReader.readLine() != null);
+
 		bufferedReader.close();
-		
-		plainText = myString.toString();
-		
+
+		if (plain == true) {
+			plainText = myString.toString();
+			cipherText = "";
+		} else {
+			plainText = "";
+			cipherText = myString.toString();
+		}
+		setChanged();
+		notifyObservers();
+	}
+
+	public void decipher(String transformed, String key) {
+		StringBuilder myText = new StringBuilder("");
+		int j = 0;
+
+		for (int i = 0; i < transformed.length(); i++, j++) {
+			if (j == key.length()) {
+				j = 0;
+			}
+			if ((transformed.charAt(i) - key.charAt(j)) >= 65) {
+				myText.append((char) (transformed.charAt(i) - key.charAt(j)));
+			} else if (((char) transformed.charAt(i) - key.charAt(j)) <= 65) {
+				myText.append((char) (transformed.charAt(i) - key.charAt(j) + 26));
+			} else {
+				myText.append((char) (transformed.charAt(i) - key.charAt(j) - 26));
+			}
+		}
+
+		plainText = myText.toString();
+
 		setChanged();
 		notifyObservers();
 	}
