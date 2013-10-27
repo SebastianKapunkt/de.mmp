@@ -11,7 +11,7 @@ public class KgFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
 
 	public KgFrame() {
-		super("Kryptografie: Cäsar und Vigenère");
+		super("Cryptography: Caesar and Vigenere");
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				System.exit(0);
