@@ -76,7 +76,7 @@ public class KgModel extends Observable {
 			if (text.charAt(i) >= 65 && text.charAt(i) <= 90) {
 				key.append((char) (text.charAt(i) - 64));
 			} else if ((text.charAt(i) >= 97 && text.charAt(i) <= 122)) {
-				key.append((char) (text.charAt(i) - 97));
+				key.append((char) (text.charAt(i) - 96));
 			} else {
 				throw new WrongNumberFormatException();
 			}
