@@ -10,6 +10,10 @@ import javax.swing.text.*;
 
 public class SetMaxText extends PlainDocument {
  
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private int limit;
 		// optional uppercase conversion
 	private boolean toUppercase = false;

@@ -67,7 +67,7 @@ public class KgView extends JPanel implements ActionListener, Observer {
 
 		btnChosePlainFile.addActionListener(this);
 		horizontalBox_1.add(btnChosePlainFile);
-
+		
 		Component horizontalStrut_5 = Box.createHorizontalStrut(20);
 		horizontalBox_1.add(horizontalStrut_5);
 
@@ -223,15 +223,17 @@ public class KgView extends JPanel implements ActionListener, Observer {
 
 		Component horizontalGlue_1 = Box.createHorizontalGlue();
 		horizontalBox_9.add(horizontalGlue_1);
-		
+
 		plainChooser.setFileFilter(new FileNameExtensionFilter("txt", "txt"));
-		cipherChooser.addChoosableFileFilter(new FileNameExtensionFilter("txt", "txt"));
+		cipherChooser.addChoosableFileFilter(new FileNameExtensionFilter("txt",
+				"txt"));
 	}
 
 	@Override
 	public void update(Observable arg0, Object arg1) {
-		plainArea.setText(model.getCypherText());
-		cipherArea.setText(model.getDeCypherText());
+		plainArea.setText(model.getPlainText());
+		cipherArea.setText(model.getCypherText());
+		keyField.setText(model.getKey());
 		if (plainChooser.getSelectedFile() != null) {
 			plainSourceLabel.setText(plainChooser.getSelectedFile().getName());
 		}
@@ -245,6 +247,8 @@ public class KgView extends JPanel implements ActionListener, Observer {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == plainClear) {
 			plainArea.setText("");
+			model.setPlainText("");
+			plainSourceLabel.setText("");
 		}
 		if (e.getSource() == btnEncipher) {
 			readInputDecypherArea();
@@ -258,7 +262,7 @@ public class KgView extends JPanel implements ActionListener, Observer {
 				}
 			} catch (WrongNumberFormatException e1) {
 				JOptionPane.showMessageDialog(this,
-						"KEY: Only uppercase letters A-Z possible.",
+						"KEY: Only letters A-Z or a-z possible.",
 						"wrong input", JOptionPane.ERROR_MESSAGE);
 			} catch (NoValueFoundException e1) {
 				JOptionPane.showMessageDialog(this,
@@ -288,6 +292,8 @@ public class KgView extends JPanel implements ActionListener, Observer {
 		}
 		if (e.getSource() == cipherClear) {
 			cipherArea.setText("");
+			model.setCypherText("");
+			cipherSourceLabel.setText("");
 		}
 		if (e.getSource() == btnChosePlainFile) {
 			if (plainChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
@@ -312,11 +318,11 @@ public class KgView extends JPanel implements ActionListener, Observer {
 	}
 
 	private void readInputDecypherArea() {
-		model.setDeCypherText(cipherArea.getText());
+		model.setCypherText(cipherArea.getText());
 	}
 
 	private void readInputCypherArea() {
-		model.setCypherText(plainArea.getText());
+		model.setPlainText(plainArea.getText());
 	}
 
 }
