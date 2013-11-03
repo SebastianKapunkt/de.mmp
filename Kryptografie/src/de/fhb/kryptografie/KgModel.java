@@ -78,7 +78,7 @@ public class KgModel extends Observable {
 				myText.append(text.charAt(i));
 			}
 			if (text.charAt(i) > 64 && text.charAt(i) < 91) {
-				myText.append(text.charAt(i));
+				myText.append((char) (text.charAt(i) + 32));
 			}
 			if (text.charAt(i) == 'ä' || text.charAt(i) == 'Ä') {
 				myText.append("ae");
@@ -109,7 +109,7 @@ public class KgModel extends Observable {
 	 * @throws WrongNumberFormatException
 	 */
 	public String calculateKey(String text) throws WrongNumberFormatException {
-		StringBuilder key = new StringBuilder();
+		StringBuilder key = new StringBuilder("");
 
 		for (int i = 0; i < text.length(); i++) {
 			if (text.charAt(i) >= 65 && text.charAt(i) <= 90) {
@@ -201,17 +201,16 @@ public class KgModel extends Observable {
 			if (j == key.length()) {
 				j = 0;
 			}
-			if ((transformed.charAt(i) - key.charAt(j)) >= 65) {
+			if ((transformed.charAt(i) - key.charAt(j)) >= 97) {
 				myText.append((char) (transformed.charAt(i) - key.charAt(j)));
-			} else if (((char) transformed.charAt(i) - key.charAt(j)) <= 65) {
-				myText.append((char) (transformed.charAt(i) - key.charAt(j) + 26));
-			} else {
-				myText.append((char) (transformed.charAt(i) - key.charAt(j) - 26));
+			}
+			if ((transformed.charAt(i) - key.charAt(j)) < 97) {
+				myText.append((char) ((transformed.charAt(i) - key.charAt(j)) + 26));
 			}
 		}
 
 		plainText = myText.toString().toLowerCase();
-		cipherText = transformed;
+		cipherText = transformed.toUpperCase();
 
 		setChanged();
 		notifyObservers();
