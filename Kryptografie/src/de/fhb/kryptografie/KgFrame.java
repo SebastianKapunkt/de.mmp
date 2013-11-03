@@ -1,3 +1,10 @@
+/** @author:
+ * Eric Dobritius 	 20110009
+ * Gordan Just		 20091313 
+ * Sebastian Kindt 	 20120023
+ * 
+ * @version: 1.0
+ */
 package de.fhb.kryptografie;
 
 import java.awt.Dimension;
@@ -21,6 +28,10 @@ public class KgFrame extends JFrame {
 		KgView view = new KgView(model);
 		getContentPane().add(view);
 
+		/**
+		 * Nimmt den Bildschirm größe und setzt die Startposition des Fenster
+		 * auf die Mitte des Bildschirm
+		 */
 		Dimension screenSize = new Dimension(Toolkit.getDefaultToolkit()
 				.getScreenSize());
 		setPreferredSize(new Dimension(900, 450));

@@ -1,3 +1,10 @@
+/** @author:
+ * Eric Dobritius 	 20110009
+ * Gordan Just		 20091313 
+ * Sebastian Kindt 	 20120023
+ * 
+ * @version: 1.0
+ */
 package de.fhb.kryptografie;
 
 import java.awt.Color;
@@ -26,9 +33,6 @@ import java.io.IOException;
 
 public class KgView extends JPanel implements ActionListener, Observer {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	KgModel model;
 	SetMaxText maxText;
@@ -67,7 +71,7 @@ public class KgView extends JPanel implements ActionListener, Observer {
 
 		btnChosePlainFile.addActionListener(this);
 		horizontalBox_1.add(btnChosePlainFile);
-		
+
 		Component horizontalStrut_5 = Box.createHorizontalStrut(20);
 		horizontalBox_1.add(horizontalStrut_5);
 
@@ -317,10 +321,16 @@ public class KgView extends JPanel implements ActionListener, Observer {
 		}
 	}
 
+	/**
+	 * Liest den Inhalt des JTextArea mit dem Name cipherArea aus.
+	 */
 	private void readInputDecypherArea() {
 		model.setCypherText(cipherArea.getText());
 	}
 
+	/**
+	 * Liest den Inhalt des JtextArea mit dem Namen plainArea aus.
+	 */
 	private void readInputCypherArea() {
 		model.setPlainText(plainArea.getText());
 	}
