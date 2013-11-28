@@ -14,6 +14,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import javax.swing.Box;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -30,6 +31,8 @@ import de.fhb.kryptografie.exceptions.WrongNumberFormatException;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.io.IOException;
+
+import javax.swing.JRadioButton;
 
 public class KgView extends JPanel implements ActionListener, Observer {
 
@@ -58,6 +61,12 @@ public class KgView extends JPanel implements ActionListener, Observer {
 	JFileChooser plainChooser = new JFileChooser();
 	JFileChooser cipherChooser = new JFileChooser();
 
+	JRadioButton rdbtnNormal = new JRadioButton("normal");
+	JRadioButton rdbtnEntschlsseln = new JRadioButton(
+			"decrypt Caesar");
+	JRadioButton rdbtnEntschlsselnVigenere = new JRadioButton(
+			"decrypt Vigenere");
+
 	public KgView(KgModel model) {
 		this.model = model;
 		model.addObserver(this);
@@ -77,10 +86,31 @@ public class KgView extends JPanel implements ActionListener, Observer {
 
 		horizontalBox_1.add(plainSourceLabel);
 
+		horizontalBox_1.add(cipherSourceLabel);
+
+		ButtonGroup group = new ButtonGroup();
+
 		Component horizontalGlue_2 = Box.createHorizontalGlue();
 		horizontalBox_1.add(horizontalGlue_2);
+		horizontalBox_1.add(rdbtnNormal);
 
-		horizontalBox_1.add(cipherSourceLabel);
+		rdbtnNormal.addActionListener(this);
+		rdbtnNormal.setSelected(true);
+		rdbtnNormal.setActionCommand("N");
+		group.add(rdbtnNormal);
+		horizontalBox_1.add(rdbtnEntschlsseln);
+
+		rdbtnEntschlsseln.addActionListener(this);
+		rdbtnEntschlsseln.setActionCommand("C");
+		group.add(rdbtnEntschlsseln);
+		horizontalBox_1.add(rdbtnEntschlsselnVigenere);
+
+		rdbtnEntschlsselnVigenere.addActionListener(this);
+		rdbtnEntschlsselnVigenere.setActionCommand("V");
+		group.add(rdbtnEntschlsselnVigenere);
+
+		Component horizontalGlue_3 = Box.createHorizontalGlue();
+		horizontalBox_1.add(horizontalGlue_3);
 
 		Component horizontalStrut_6 = Box.createHorizontalStrut(20);
 		horizontalBox_1.add(horizontalStrut_6);
@@ -228,6 +258,9 @@ public class KgView extends JPanel implements ActionListener, Observer {
 		Component horizontalGlue_1 = Box.createHorizontalGlue();
 		horizontalBox_9.add(horizontalGlue_1);
 
+		Box horizontalBox_2 = Box.createHorizontalBox();
+		verticalBox.add(horizontalBox_2);
+
 		plainChooser.setFileFilter(new FileNameExtensionFilter("txt", "txt"));
 		cipherChooser.addChoosableFileFilter(new FileNameExtensionFilter("txt",
 				"txt"));
@@ -249,11 +282,13 @@ public class KgView extends JPanel implements ActionListener, Observer {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		// Plain-text Clear Button Action
 		if (e.getSource() == plainClear) {
 			plainArea.setText("");
 			model.setPlainText("");
 			plainSourceLabel.setText("");
 		}
+		// Encipher Button Action
 		if (e.getSource() == btnEncipher) {
 			readInputDecypherArea();
 			try {
@@ -274,7 +309,9 @@ public class KgView extends JPanel implements ActionListener, Observer {
 						JOptionPane.ERROR_MESSAGE);
 			}
 		}
-		if (e.getSource() == btnDecipher) {
+
+		// Decipher Button Action
+		if (e.getSource() == btnDecipher && rdbtnNormal.isSelected()) {
 			readInputCypherArea();
 			try {
 				if (keyField.getText().isEmpty()
@@ -293,12 +330,43 @@ public class KgView extends JPanel implements ActionListener, Observer {
 						"No content at cipher text or key", "No value found",
 						JOptionPane.ERROR_MESSAGE);
 			}
+		} else if (e.getSource() == btnDecipher
+				&& rdbtnEntschlsseln.isSelected()) {
+			readInputCypherArea();
+			try {
+				if (cipherArea.getText().isEmpty()) {
+					throw new NoValueFoundException();
+				} else {
+					model.decipherCaesar(model.transform(cipherArea.getText()));
+				}
+			} catch (NoValueFoundException e1) {
+				JOptionPane.showMessageDialog(this,
+						"No content at cipher text", "No value found",
+						JOptionPane.ERROR_MESSAGE);
+			}
+		} else if (e.getSource() == btnDecipher
+				&& rdbtnEntschlsselnVigenere.isSelected()) {
+			readInputCypherArea();
+			try {
+				if (cipherArea.getText().isEmpty()) {
+					throw new NoValueFoundException();
+				} else {
+					model.decipherVigenere(model.transform(cipherArea.getText()));
+				}
+			} catch (NoValueFoundException e1) {
+				JOptionPane.showMessageDialog(this,
+						"No content at cipher text", "No value found",
+						JOptionPane.ERROR_MESSAGE);
+			}
 		}
+
+		// Ciphertext clear Button Action
 		if (e.getSource() == cipherClear) {
 			cipherArea.setText("");
 			model.setCypherText("");
 			cipherSourceLabel.setText("");
 		}
+		// PlainFileChooser Button Action
 		if (e.getSource() == btnChosePlainFile) {
 			if (plainChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
 				try {
@@ -309,6 +377,7 @@ public class KgView extends JPanel implements ActionListener, Observer {
 				}
 			}
 		}
+		// CipherFileChooser Button Action
 		if (e.getSource() == btnChoseCipherFile) {
 			if (cipherChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
 				try {
@@ -319,6 +388,47 @@ public class KgView extends JPanel implements ActionListener, Observer {
 				}
 			}
 		}
+		// Radiobutton Normal Action
+		if (e.getSource() == rdbtnNormal) {
+			changemode();
+			clear();
+		}
+		// Radiobutton Entschlsseln Action
+		if (e.getSource() == rdbtnEntschlsseln) {
+			changemode();
+
+			clear();
+		}
+		// Radiobutton EntschlsselnVigenere Action
+		if (e.getSource() == rdbtnEntschlsselnVigenere) {
+			changemode();
+			clear();
+		}
+	}
+	/**
+	 * Deaktiviert/Aktiviert Elemente der Gui je nach dem welcher Radiobutton selektiert ist.
+	 */
+	private void changemode() {
+		if(rdbtnNormal.isSelected()){
+			btnEncipher.setEnabled(true);
+			btnChosePlainFile.setEnabled(true);
+			keyField.setEditable(true);
+			plainArea.setEditable(true);
+		}else{
+			btnEncipher.setEnabled(false);
+			btnChosePlainFile.setEnabled(false);
+			keyField.setEditable(false);
+			plainArea.setEditable(false);
+		}
+	}
+
+	/**
+	 * Löscht den Inhalt der beiden Text-Area und des Keyfiled.
+	 */
+	private void clear() {
+		keyField.setText("");
+		plainArea.setText("");
+		cipherArea.setText("");		
 	}
 
 	/**
@@ -334,5 +444,4 @@ public class KgView extends JPanel implements ActionListener, Observer {
 	private void readInputCypherArea() {
 		model.setPlainText(plainArea.getText());
 	}
-
 }

@@ -172,10 +172,10 @@ public class KgModel extends Observable {
 			}
 			if ((transformed.charAt(i) + key.charAt(j)) <= 122) {
 				myText.append((char) (transformed.charAt(i) + key.charAt(j)));
-			} 
+			}
 			if (((char) transformed.charAt(i) + key.charAt(j)) > 122) {
 				myText.append((char) (transformed.charAt(i) + key.charAt(j) - 26));
-			} 
+			}
 		}
 
 		cipherText = myText.toString().toUpperCase();
@@ -213,5 +213,15 @@ public class KgModel extends Observable {
 
 		setChanged();
 		notifyObservers();
+	}
+
+	public void decipherCaesar(String transform) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void decipherVigenere(String transform) {
+		// TODO Auto-generated method stub
+
 	}
 }
