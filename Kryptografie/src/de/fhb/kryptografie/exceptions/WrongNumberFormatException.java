@@ -1,4 +1,4 @@
-package exceptions;
+package de.fhb.kryptografie.exceptions;
 
 public class WrongNumberFormatException extends Exception {
 	/**

@@ -5,7 +5,7 @@
  * 
  * @version: 1.0
  */
-package kryptografie;
+package de.fhb.kryptografie;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -13,7 +13,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Observable;
 
-import exceptions.WrongNumberFormatException;
+import de.fhb.kryptografie.exceptions.WrongNumberFormatException;
 
 public class KgModel extends Observable {
 
