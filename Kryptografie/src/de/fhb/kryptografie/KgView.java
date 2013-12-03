@@ -427,8 +427,11 @@ public class KgView extends JPanel implements ActionListener, Observer {
 	 */
 	private void clear() {
 		keyField.setText("");
+		model.setKey("");
 		plainArea.setText("");
-		cipherArea.setText("");		
+		model.setPlainText("");
+		cipherArea.setText("");
+		model.setCypherText("");
 	}
 
 	/**

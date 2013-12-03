@@ -11,6 +11,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Hashtable;
 import java.util.Observable;
 
 import de.fhb.kryptografie.exceptions.WrongNumberFormatException;
@@ -23,6 +24,10 @@ public class KgModel extends Observable {
 	private String plainText = new String("");
 	private String cipherText = new String("");
 	private String key;
+	private Hashtable<Character, Integer> signProbability = new Hashtable<Character, Integer>();
+
+	
+
 
 	/**
 	 * IO-Elemente zum arbeiten mit Files
@@ -31,7 +36,7 @@ public class KgModel extends Observable {
 	private BufferedReader bufferedReader;
 
 	/**
-	 * Getter für Key, PlainText und CypherText
+	 * Getter für Key, PlainText, CypherText und signProbability
 	 */
 	public String getKey() {
 		return key;
@@ -44,9 +49,12 @@ public class KgModel extends Observable {
 	public String getCypherText() {
 		return cipherText;
 	}
-
+	
+	public Hashtable<Character, Integer> getKeyfrequent() {
+		return signProbability;
+	}
 	/**
-	 * Setter für Key, PlainText und CypherText
+	 * Setter für Key, PlainText, CypherText und signProbability
 	 */
 	public void setCypherText(String cypherText) {
 		this.cipherText = cypherText;
@@ -58,6 +66,10 @@ public class KgModel extends Observable {
 
 	public void setKey(String key) {
 		this.key = key;
+	}
+
+	public void setKeyfrequent(Hashtable<Character, Integer> keyfrequent) {
+		this.signProbability = keyfrequent;
 	}
 
 	/**
@@ -216,8 +228,24 @@ public class KgModel extends Observable {
 	}
 
 	public void decipherCaesar(String transform) {
-		// TODO Auto-generated method stub
+		clearHashtable();
+		for (int i = 0; i < transform.length(); i++) {
+			signProbability.put(transform.charAt(i), signProbability.get(transform.charAt(i))+1);				
+		}
+		ausgabebuchstaben();
+	}
 
+	private void ausgabebuchstaben() {
+		for(int j = 1; j < 27; j++){
+			System.out.print(((char)(96+j)) + " " +signProbability.get((char)(96+j))+((j%4==0)? "\n" : "\t"));			
+		}
+		System.out.println("");
+	}
+
+	private void clearHashtable() {
+		for (int i = 0; i <= 26; i++) {
+			signProbability.put((char) (97+i),0);
+		}
 	}
 
 	public void decipherVigenere(String transform) {
