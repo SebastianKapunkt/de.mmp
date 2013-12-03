@@ -69,6 +69,10 @@ public class KgView extends JPanel implements ActionListener, Observer {
 
 	public KgView(KgModel model) {
 		this.model = model;
+	
+		//Generieren der Constanten Hash-Tabelle
+		model.generateConstSignProbability();
+		
 		model.addObserver(this);
 		setBackground(Color.lightGray);
 

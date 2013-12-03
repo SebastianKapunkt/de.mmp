@@ -24,10 +24,8 @@ public class KgModel extends Observable {
 	private String plainText = new String("");
 	private String cipherText = new String("");
 	private String key;
-	private Hashtable<Character, Integer> signProbability = new Hashtable<Character, Integer>();
-
-	
-
+	private Hashtable<Character, Integer> signCount = new Hashtable<Character, Integer>();
+	private Hashtable<Character, Double> FREQUENCYTABLE = new Hashtable<Character, Double>();
 
 	/**
 	 * IO-Elemente zum arbeiten mit Files
@@ -36,7 +34,7 @@ public class KgModel extends Observable {
 	private BufferedReader bufferedReader;
 
 	/**
-	 * Getter für Key, PlainText, CypherText und signProbability
+	 * Getter für Key, PlainText, CypherText und signCount
 	 */
 	public String getKey() {
 		return key;
@@ -49,12 +47,13 @@ public class KgModel extends Observable {
 	public String getCypherText() {
 		return cipherText;
 	}
-	
-	public Hashtable<Character, Integer> getKeyfrequent() {
-		return signProbability;
+
+	public Hashtable<Character, Integer> getSignCount() {
+		return signCount;
 	}
+
 	/**
-	 * Setter für Key, PlainText, CypherText und signProbability
+	 * Setter für Key, PlainText, CypherText und signCount
 	 */
 	public void setCypherText(String cypherText) {
 		this.cipherText = cypherText;
@@ -68,8 +67,8 @@ public class KgModel extends Observable {
 		this.key = key;
 	}
 
-	public void setKeyfrequent(Hashtable<Character, Integer> keyfrequent) {
-		this.signProbability = keyfrequent;
+	public void setSignCount(Hashtable<Character, Integer> keyfrequent) {
+		this.signCount = keyfrequent;
 	}
 
 	/**
@@ -227,29 +226,106 @@ public class KgModel extends Observable {
 		notifyObservers();
 	}
 
+	/**
+	 * Die Methode decipherCaesar entschlüsselt eine Text mit der Schlüssellänge
+	 * 1 auf Basis des Caesar Verfahrens
+	 * 
+	 * @param transform
+	 */
 	public void decipherCaesar(String transform) {
 		clearHashtable();
+
 		for (int i = 0; i < transform.length(); i++) {
-			signProbability.put(transform.charAt(i), signProbability.get(transform.charAt(i))+1);				
+			signCount.put(transform.charAt(i),
+					signCount.get(transform.charAt(i)) + 1);
 		}
-		ausgabebuchstaben();
+
+//		ausgabebuchstaben(signCount);
+
+		char ms = getMostSign(signCount);
+
+		String encrypted = encryptby('e' - ms, transform);
+
+		plainText = encrypted.toLowerCase();
+		cipherText = transform.toUpperCase();
+		key = (char) (97 + 'e' - ms) + " ";
+
+		setChanged();
+		notifyObservers();
 	}
 
-	private void ausgabebuchstaben() {
-		for(int j = 1; j < 27; j++){
-			System.out.print(((char)(96+j)) + " " +signProbability.get((char)(96+j))+((j%4==0)? "\n" : "\t"));			
+	private String encryptby(int dif, String transform) {
+		StringBuilder myText = new StringBuilder("");
+
+		for (int i = 0; i < transform.length(); i++) {
+			if (transform.charAt(i) + dif < 97) {
+				myText.append((char) ((transform.charAt(i) + dif + 26)));
+			} else if (transform.charAt(i) + dif > 122) {
+				myText.append((char) ((transform.charAt(i) + dif - 26)));
+			} else {
+				myText.append((char) ((transform.charAt(i) + dif)));
+			}
 		}
-		System.out.println("");
+		return myText.toString();
 	}
+
+	private char getMostSign(Hashtable<Character, Integer> signCount2) {
+		int max = 0;
+		char sign = 'a';
+		for (int i = 0; i < 26; i++) {
+			if (signCount2.get((char) (97 + i)) > max) {
+				max = signCount2.get((char) (97 + i));
+				sign = (char) (97 + i);
+			}
+		}
+		return sign;
+	}
+
+//	private void ausgabebuchstaben(Hashtable<Character, Integer> ht) {
+//		for (int j = 1; j < 27; j++) {
+//			System.out.print(((char) (96 + j)) + " " + ht.get((char) (96 + j))
+//					+ ((j % 4 == 0) ? "\n" : "\t"));
+//		}
+//		System.out.println("");
+//	}
 
 	private void clearHashtable() {
-		for (int i = 0; i <= 26; i++) {
-			signProbability.put((char) (97+i),0);
+		for (int i = 0; i < 26; i++) {
+			signCount.put((char) (97 + i), 0);
 		}
 	}
 
 	public void decipherVigenere(String transform) {
 		// TODO Auto-generated method stub
-
 	}
+
+	public void generateConstSignProbability() {
+		FREQUENCYTABLE.put('a', 6.51);
+		FREQUENCYTABLE.put('b', 1.89);
+		FREQUENCYTABLE.put('c', 3.06);
+		FREQUENCYTABLE.put('d', 5.08);
+		FREQUENCYTABLE.put('e', 17.40);
+		FREQUENCYTABLE.put('f', 1.66);
+		FREQUENCYTABLE.put('g', 3.01);
+		FREQUENCYTABLE.put('h', 4.76);
+		FREQUENCYTABLE.put('i', 7.55);
+		FREQUENCYTABLE.put('j', 0.27);
+		FREQUENCYTABLE.put('k', 1.21);
+		FREQUENCYTABLE.put('l', 3.44);
+		FREQUENCYTABLE.put('m', 2.53);
+		FREQUENCYTABLE.put('n', 9.78);
+		FREQUENCYTABLE.put('o', 2.51);
+		FREQUENCYTABLE.put('p', 0.79);
+		FREQUENCYTABLE.put('q', 0.02);
+		FREQUENCYTABLE.put('r', 7.00);
+		FREQUENCYTABLE.put('s', 7.27);
+		FREQUENCYTABLE.put('t', 6.15);
+		FREQUENCYTABLE.put('u', 4.35);
+		FREQUENCYTABLE.put('v', 0.67);
+		FREQUENCYTABLE.put('w', 1.89);
+		FREQUENCYTABLE.put('x', 0.03);
+		FREQUENCYTABLE.put('y', 0.04);
+		FREQUENCYTABLE.put('z', 1.13);
+	}
+
 }
