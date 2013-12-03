@@ -5,7 +5,7 @@
  * 
  * @version: 1.0
  */
-package de.fhb.kryptografie;
+package kryptografie;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -24,8 +24,8 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import de.fhb.kryptografie.exceptions.NoValueFoundException;
-import de.fhb.kryptografie.exceptions.WrongNumberFormatException;
+import exceptions.NoValueFoundException;
+import exceptions.WrongNumberFormatException;
 
 import java.awt.Component;
 import java.awt.Dimension;

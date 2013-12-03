@@ -4,7 +4,7 @@
  * 
  */
 
-package de.fhb.kryptografie;
+package kryptografie;
 import javax.swing.text.PlainDocument;
 import javax.swing.text.*;
 

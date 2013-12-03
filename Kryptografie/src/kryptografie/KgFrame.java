@@ -5,7 +5,7 @@
  * 
  * @version: 1.0
  */
-package de.fhb.kryptografie;
+package kryptografie;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
