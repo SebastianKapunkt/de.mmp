@@ -64,17 +64,16 @@ public class KgView extends JPanel implements ActionListener, Observer {
 	JFileChooser cipherChooser = new JFileChooser();
 
 	JRadioButton rdbtnNormal = new JRadioButton("normal");
-	JRadioButton rdbtnEntschlsseln = new JRadioButton(
-			"decrypt Caesar");
+	JRadioButton rdbtnEntschlsseln = new JRadioButton("decrypt Caesar");
 	JRadioButton rdbtnEntschlsselnVigenere = new JRadioButton(
 			"decrypt Vigenere");
 
 	public KgView(KgModel model) {
 		this.model = model;
-	
-		//Generieren der Constanten Hash-Tabelle
+
+		// Generieren der Constanten Hash-Tabelle
 		model.generateConstSignProbability();
-		
+
 		model.addObserver(this);
 		setBackground(Color.lightGray);
 
@@ -115,8 +114,8 @@ public class KgView extends JPanel implements ActionListener, Observer {
 
 		Component horizontalGlue_3 = Box.createHorizontalGlue();
 		horizontalBox_1.add(horizontalGlue_3);
-		
-				horizontalBox_1.add(cipherSourceLabel);
+
+		horizontalBox_1.add(cipherSourceLabel);
 
 		Component horizontalStrut_6 = Box.createHorizontalStrut(20);
 		horizontalBox_1.add(horizontalStrut_6);
@@ -236,12 +235,13 @@ public class KgView extends JPanel implements ActionListener, Observer {
 		rightBox.add(horizontalBox_5);
 
 		horizontalBox_5.add(cipherLabel);
-		
+
 		Component horizontalGlue_4 = Box.createHorizontalGlue();
 		horizontalBox_5.add(horizontalGlue_4);
-		
-		
-		btnN.setIcon(new ImageIcon(KgView.class.getResource("/com/sun/java/swing/plaf/windows/icons/Computer.gif")));
+
+		btnN.setIcon(new ImageIcon(
+				KgView.class
+						.getResource("/com/sun/java/swing/plaf/windows/icons/Computer.gif")));
 		btnN.addActionListener(this);
 		btnN.setEnabled(false);
 		horizontalBox_5.add(btnN);
@@ -353,12 +353,16 @@ public class KgView extends JPanel implements ActionListener, Observer {
 				if (cipherArea.getText().isEmpty()) {
 					throw new NoValueFoundException();
 				} else {
-					model.decipherCaesar(model.transform(cipherArea.getText()),true);
+					model.decipherCaesar(model.transform(cipherArea.getText()),
+							true);
 				}
 			} catch (NoValueFoundException e1) {
 				JOptionPane.showMessageDialog(this,
 						"No content at cipher text", "No value found",
 						JOptionPane.ERROR_MESSAGE);
+			} catch (WrongNumberFormatException e1) {
+				JOptionPane.showMessageDialog(this, "Unable to reach key",
+						"Error", JOptionPane.ERROR_MESSAGE);
 			}
 		} else if (e.getSource() == btnDecipher
 				&& rdbtnEntschlsselnVigenere.isSelected()) {
@@ -375,7 +379,15 @@ public class KgView extends JPanel implements ActionListener, Observer {
 						JOptionPane.ERROR_MESSAGE);
 			}
 		}
-
+		// BtnN ('retry') Action
+		if (e.getSource() == btnN) {
+			try {
+				model.decipherCaesar(model.transform(cipherArea.getText()), false);
+			} catch (WrongNumberFormatException e1) {
+				JOptionPane.showMessageDialog(this, "Unable to reach key",
+						"Error", JOptionPane.ERROR_MESSAGE);
+			}
+		}
 		// Ciphertext clear Button Action
 		if (e.getSource() == cipherClear) {
 			cipherArea.setText("");
@@ -423,17 +435,19 @@ public class KgView extends JPanel implements ActionListener, Observer {
 			clear();
 		}
 	}
+
 	/**
-	 * Deaktiviert/Aktiviert Elemente der Gui je nach dem welcher Radiobutton selektiert ist.
+	 * Deaktiviert/Aktiviert Elemente der Gui je nach dem welcher Radiobutton
+	 * selektiert ist.
 	 */
 	private void changemode() {
-		if(rdbtnNormal.isSelected()){
+		if (rdbtnNormal.isSelected()) {
 			btnEncipher.setEnabled(true);
 			btnChosePlainFile.setEnabled(true);
 			keyField.setEditable(true);
 			plainArea.setEditable(true);
 			btnN.setEnabled(false);
-		}else{
+		} else {
 			btnEncipher.setEnabled(false);
 			btnChosePlainFile.setEnabled(false);
 			keyField.setEditable(false);
