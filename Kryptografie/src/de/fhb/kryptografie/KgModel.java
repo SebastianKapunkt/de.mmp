@@ -188,7 +188,9 @@ public class KgModel extends Observable {
 				myText.append((char) (transformed.charAt(i) + key.charAt(j) - 26));
 			}
 		}
-
+		System.out.println("transformed: "+transformed);
+		System.out.println("myText: "+myText.toString());
+		System.out.println("key: "+key);
 		cipherText = myText.toString().toUpperCase();
 		plainText = transformed;
 
@@ -232,46 +234,32 @@ public class KgModel extends Observable {
 	 * 
 	 * @param transform
 	 */
-	public void decipherCaesar(String transform) {
-		clearHashtable();
-
-		for (int i = 0; i < transform.length(); i++) {
-			signCount.put(transform.charAt(i),
-					signCount.get(transform.charAt(i)) + 1);
-		}
-
-//		ausgabebuchstaben(signCount);
-
-		char ms = getMostSign(signCount);
-
-		String encrypted = encryptby('e' - ms, transform);
-
-		plainText = encrypted.toLowerCase();
-		cipherText = transform.toUpperCase();
-		key = (char) (97 + 'e' - ms) + " ";
-
-		setChanged();
-		notifyObservers();
-	}
-
-	private String encryptby(int dif, String transform) {
-		StringBuilder myText = new StringBuilder("");
-
-		for (int i = 0; i < transform.length(); i++) {
-			if (transform.charAt(i) + dif < 97) {
-				myText.append((char) ((transform.charAt(i) + dif + 26)));
-			} else if (transform.charAt(i) + dif > 122) {
-				myText.append((char) ((transform.charAt(i) + dif - 26)));
-			} else {
-				myText.append((char) ((transform.charAt(i) + dif)));
+	public void decipherCaesar(String transform, boolean flagM) {
+		char ms = 'e';
+//		Wenn flagM == true, dann wird das verfahren neu begonnen. 
+//		flagM == false --> wird der nächst wahrscheinlichst Buchstabe genommen.	
+		if(flagM){
+			clearHashtable();
+			for (int i = 0; i < transform.length(); i++) {
+				signCount.put(transform.charAt(i),
+						signCount.get(transform.charAt(i)) + 1);
 			}
+			ms = getMostSign(signCount);
+			encipher(transform, "e");
+			System.out.println("Hallo Welt");
+			System.out.println(transform);
+		}else{
+			
 		}
-		return myText.toString();
+
+		ausgabebuchstaben(signCount);
+
+		System.out.println(ms);
 	}
 
 	private char getMostSign(Hashtable<Character, Integer> signCount2) {
 		int max = 0;
-		char sign = 'a';
+		char sign = 'e';
 		for (int i = 0; i < 26; i++) {
 			if (signCount2.get((char) (97 + i)) > max) {
 				max = signCount2.get((char) (97 + i));
@@ -281,13 +269,13 @@ public class KgModel extends Observable {
 		return sign;
 	}
 
-//	private void ausgabebuchstaben(Hashtable<Character, Integer> ht) {
-//		for (int j = 1; j < 27; j++) {
-//			System.out.print(((char) (96 + j)) + " " + ht.get((char) (96 + j))
-//					+ ((j % 4 == 0) ? "\n" : "\t"));
-//		}
-//		System.out.println("");
-//	}
+	private void ausgabebuchstaben(Hashtable<Character, Integer> ht) {
+		for (int j = 1; j < 27; j++) {
+			System.out.print(((char) (96 + j)) + " " + ht.get((char) (96 + j))
+					+ ((j % 4 == 0) ? "\n" : "\t"));
+		}
+		System.out.println("");
+	}
 
 	private void clearHashtable() {
 		for (int i = 0; i < 26; i++) {
