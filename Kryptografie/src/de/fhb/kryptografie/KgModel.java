@@ -173,10 +173,10 @@ public class KgModel extends Observable {
 			}
 			if ((transformed.charAt(i) + key.charAt(j)) <= 122) {
 				myText.append((char) (transformed.charAt(i) + key.charAt(j)));
-			} 
+			}
 			if (((char) transformed.charAt(i) + key.charAt(j)) > 122) {
 				myText.append((char) (transformed.charAt(i) + key.charAt(j) - alphabetlength));
-			} 
+			}
 		}
 
 		cipherText = myText.toString().toUpperCase();
