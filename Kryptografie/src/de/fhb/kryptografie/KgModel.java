@@ -23,6 +23,7 @@ public class KgModel extends Observable {
 	private String plainText = new String("");
 	private String cipherText = new String("");
 	private String key;
+	private int alphabetlength = 26;
 
 	/**
 	 * IO-Elemente zum arbeiten mit Files
@@ -174,7 +175,7 @@ public class KgModel extends Observable {
 				myText.append((char) (transformed.charAt(i) + key.charAt(j)));
 			} 
 			if (((char) transformed.charAt(i) + key.charAt(j)) > 122) {
-				myText.append((char) (transformed.charAt(i) + key.charAt(j) - 26));
+				myText.append((char) (transformed.charAt(i) + key.charAt(j) - alphabetlength));
 			} 
 		}
 
@@ -204,7 +205,7 @@ public class KgModel extends Observable {
 				myText.append((char) (transformed.charAt(i) - key.charAt(j)));
 			}
 			if ((transformed.charAt(i) - key.charAt(j)) < 97) {
-				myText.append((char) ((transformed.charAt(i) - key.charAt(j)) + 26));
+				myText.append((char) ((transformed.charAt(i) - key.charAt(j)) + alphabetlength));
 			}
 		}
 
