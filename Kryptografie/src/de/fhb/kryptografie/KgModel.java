@@ -242,6 +242,8 @@ public class KgModel extends Observable {
 		// flagM == false --> wird der nächst wahrscheinlichst Buchstabe
 		// genommen.
 
+		// Überprüft Ob ein neuer Versuch gestartet wurde oder
+		// ein anderer chiffre Text eingegeben wurde
 		if (currentText.equals(transform)) {
 			flagM = false;
 		}
@@ -250,93 +252,69 @@ public class KgModel extends Observable {
 			currentText = transform;
 			clearHashtable();
 
-			// Zählt die Zeichen im verschlüsselten Text.
 			for (int i = 0; i < transform.length(); i++) {
 				signCount.put(transform.charAt(i),
 						signCount.get(transform.charAt(i)) + 1);
 			}
 
-//			trychar = generateFrequency(signCount, FREQUENCYTABLE);
+			trychar = nextTryChar(generateFrequency(transform.length()));
 
-			// benutzt die Entschlüsselfunktion decipher mit dem errechneten
-			// Key.
-			decipher(
-					transform,
-					calculateKey(((char) calculatedifference(
-							getMostSign(signCount), trychar)) + ""));
+			decipher(transform, calculateKey(trychar + ""));
 		} else {
-			// bestimmt das Zeichen welches das nächst wahrscheinlichste ist.
-			trychar = nextTryChar(trychar);
-			// benutzt die Entschlüsselfunktion decipher mit dem errechneten Key
-			decipher(
-					transform,
-					calculateKey(((char) calculatedifference(
-							getMostSign(signCount), trychar)) + ""));
+
 		}
 	}
 
-//	private char generateFrequency(Hashtable<Character, Integer> signCount2,
-//			Hashtable<Character, Double> fREQUENCYTABLE2) {
-//			for(int i = 0; i <= alphabetlength; i++){
-//				
-//			}
-//		return 0;
-//	}
-
-	/**
-	 * Errechnet aus dem am meisten vorkommenden Zeichen des Verschlüsselten
-	 * Text und dem Wahrscheinlichsten Zeichen der deutschen Sprache den
-	 * Abestand um den Schlüssel zu bestimmen.
-	 * 
-	 * @param ms
-	 * @param trychar
-	 * @return sign
-	 */
-	private int calculatedifference(char ms, char trychar) {
-		int value = (int) ms - trychar;
-
-		if ((97 + value) < 97) {
-			value = 97 + value + alphabetlength;
-		} else {
-			value = 97 + value;
-		}
-		return value;
-	}
-
-	private char nextTryChar(char trychar) {
-		Double max = FREQUENCYTABLE.get(trychar);
-		double newmax = 0;
-		char sign = 'e';
-		for (int i = 0; i < alphabetlength; i++) {
-			if (FREQUENCYTABLE.get((char) ('a' + i)) < max
-					&& FREQUENCYTABLE.get((char) ('a' + i)) > newmax) {
-				newmax = FREQUENCYTABLE.get((char) (97 + i));
-				sign = (char) (97 + i);
+	private double[] generateFrequency(int length) {
+		double[] measuredistance = new double[26];
+		measuredistance = definingMeasuredistance(measuredistance);
+		char z, y;
+		for (int j = 0; j < alphabetlength; j++) {
+			for (int i = 0; i < alphabetlength; i++) {
+				z = (char) (97 + i);
+				y = (char) (z + j);
+				if (y > 122) {
+					measuredistance[j] = measuredistance[j]
+							+ Math.abs(((double) signCount.get(z) / length)
+									* 100 - FREQUENCYTABLE.get((char) (y - 26)));
+					 System.out.print(z + ": "
+					 + ((((double) signCount.get(z)) / length) * 100)
+					 + "\t");
+					 System.out.println((char) (y-26) + ": "
+					 + FREQUENCYTABLE.get((char)(y-26)));
+				} else {
+					measuredistance[j] = measuredistance[j]
+							+ Math.abs((((double) signCount.get(z)) / length)
+									* 100 - FREQUENCYTABLE.get(y));
+					 System.out.print(z + ": "
+					 + ((((double) signCount.get(z)) / length) * 100)
+					 + "\t");
+					 System.out.println((char) (y) + ": "
+					 + FREQUENCYTABLE.get(y));
+				}
 			}
+			System.out.println(measuredistance[j]);
 		}
-		return sign;
+		return measuredistance;
 	}
 
-	private char getMostSign(Hashtable<Character, Integer> signCount2) {
-		int max = 0;
-		char sign = 'e';
-		for (int i = 0; i < alphabetlength; i++) {
-			if (signCount2.get((char) (97 + i)) > max) {
-				max = signCount2.get((char) (97 + i));
-				sign = (char) (97 + i);
-			}
+	private char nextTryChar(double[] measuredistance) {
+		char trychar = 'a';
+
+		return trychar;
+	}
+
+	private double[] definingMeasuredistance(double[] measuredistance) {
+		for (int i = 0; i < measuredistance.length; i++) {
+			measuredistance[i] = 0;
 		}
-		return sign;
+		return measuredistance;
 	}
 
 	private void clearHashtable() {
-		for (int i = 0; i < alphabetlength ; i++) {
+		for (int i = 0; i < alphabetlength; i++) {
 			signCount.put((char) (97 + i), 0);
 		}
-	}
-
-	public void decipherVigenere(String transform) {
-		// TODO Auto-generated method stub
 	}
 
 	public void generateConstSignProbability() {
@@ -368,4 +346,7 @@ public class KgModel extends Observable {
 		FREQUENCYTABLE.put('z', 1.13);
 	}
 
+	public void decipherVigenere(String transform) {
+		// TODO Auto-generated method stub
+	}
 }
