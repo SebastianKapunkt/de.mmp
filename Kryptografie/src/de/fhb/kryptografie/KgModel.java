@@ -27,6 +27,7 @@ public class KgModel extends Observable {
 	private Hashtable<Character, Integer> signCount = new Hashtable<Character, Integer>();
 	private Hashtable<Character, Double> FREQUENCYTABLE = new Hashtable<Character, Double>();
 	private char trychar = 'e';
+	private int alphabetlength = 26;
 
 	/**
 	 * IO-Elemente zum arbeiten mit Files
@@ -186,7 +187,7 @@ public class KgModel extends Observable {
 				myText.append((char) (transformed.charAt(i) + key.charAt(j)));
 			}
 			if (((char) transformed.charAt(i) + key.charAt(j)) > 122) {
-				myText.append((char) (transformed.charAt(i) + key.charAt(j) - 26));
+				myText.append((char) (transformed.charAt(i) + key.charAt(j) - alphabetlength));
 			}
 		}
 		cipherText = myText.toString().toUpperCase();
@@ -215,7 +216,7 @@ public class KgModel extends Observable {
 				myText.append((char) (transformed.charAt(i) - key.charAt(j)));
 			}
 			if ((transformed.charAt(i) - key.charAt(j)) < 97) {
-				myText.append((char) ((transformed.charAt(i) - key.charAt(j)) + 26));
+				myText.append((char) ((transformed.charAt(i) - key.charAt(j)) + alphabetlength));
 			}
 		}
 
@@ -262,7 +263,7 @@ public class KgModel extends Observable {
 		int value = (int) ms - trychar;
 
 		if ((97 + value) < 97) {
-			value = 97 + value + 26;
+			value = 97 + value + alphabetlength;
 		} else {
 			value = 97 + value;
 		}
@@ -273,7 +274,7 @@ public class KgModel extends Observable {
 		Double max = FREQUENCYTABLE.get(trychar);
 		double newmax = 0;
 		char sign = 'e';
-		for (int i = 0; i < 26; i++) {
+		for (int i = 0; i < alphabetlength; i++) {
 			if (FREQUENCYTABLE.get((char) ('a' + i)) < max
 					&& FREQUENCYTABLE.get((char) ('a' + i)) > newmax) {
 				newmax = FREQUENCYTABLE.get((char) (97 + i));
@@ -286,7 +287,7 @@ public class KgModel extends Observable {
 	private char getMostSign(Hashtable<Character, Integer> signCount2) {
 		int max = 0;
 		char sign = 'e';
-		for (int i = 0; i < 26; i++) {
+		for (int i = 0; i < alphabetlength; i++) {
 			if (signCount2.get((char) (97 + i)) > max) {
 				max = signCount2.get((char) (97 + i));
 				sign = (char) (97 + i);
@@ -296,7 +297,7 @@ public class KgModel extends Observable {
 	}
 
 	private void clearHashtable() {
-		for (int i = 0; i < 26; i++) {
+		for (int i = 0; i < alphabetlength; i++) {
 			signCount.put((char) (97 + i), 0);
 		}
 	}
