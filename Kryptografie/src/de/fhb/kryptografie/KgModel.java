@@ -26,10 +26,10 @@ public class KgModel extends Observable {
 	private String key;
 	private Hashtable<Character, Integer> signCount = new Hashtable<Character, Integer>();
 	private Hashtable<Character, Double> FREQUENCYTABLE = new Hashtable<Character, Double>();
-	private char trychar = 'e';
+	private int number = 0;
 	private String currentText = "";
-	private int alphabetlength = 26;
-
+	private double currentmin = 0;
+	private int ALPHABETLENGTH = 26;
 	/**
 	 * IO-Elemente zum arbeiten mit Files
 	 */
@@ -124,7 +124,6 @@ public class KgModel extends Observable {
 	 */
 	public String calculateKey(String text) throws WrongNumberFormatException {
 		StringBuilder key = new StringBuilder("");
-
 		for (int i = 0; i < text.length(); i++) {
 			if (text.charAt(i) >= 65 && text.charAt(i) <= 90) {
 				key.append((char) (text.charAt(i) - 65));
@@ -188,8 +187,9 @@ public class KgModel extends Observable {
 				myText.append((char) (transformed.charAt(i) + key.charAt(j)));
 			}
 			if (((char) transformed.charAt(i) + key.charAt(j)) > 122) {
-				myText.append((char) (transformed.charAt(i) + key.charAt(j) - alphabetlength));
+				myText.append((char) (transformed.charAt(i) + key.charAt(j) - ALPHABETLENGTH));
 			}
+//			myText.append((char) (transformed.charAt(i) + key.charAt(j))%122 );
 		}
 		cipherText = myText.toString().toUpperCase();
 		plainText = transformed;
@@ -217,7 +217,7 @@ public class KgModel extends Observable {
 				myText.append((char) (transformed.charAt(i) - key.charAt(j)));
 			}
 			if ((transformed.charAt(i) - key.charAt(j)) < 97) {
-				myText.append((char) ((transformed.charAt(i) - key.charAt(j)) + alphabetlength));
+				myText.append((char) ((transformed.charAt(i) - key.charAt(j)) + ALPHABETLENGTH));
 			}
 		}
 
@@ -249,7 +249,9 @@ public class KgModel extends Observable {
 		}
 
 		if (flagM) {
+			number = 0;
 			currentText = transform;
+			currentmin = 0;
 			clearHashtable();
 
 			for (int i = 0; i < transform.length(); i++) {
@@ -257,11 +259,16 @@ public class KgModel extends Observable {
 						signCount.get(transform.charAt(i)) + 1);
 			}
 
-			trychar = nextTryChar(generateFrequency(transform.length()));
-
-			decipher(transform, calculateKey(trychar + ""));
+			decipher(
+					transform,
+					calculateKey(nextTryChar(generateFrequency(transform
+							.length())) + ""));
 		} else {
 
+			decipher(
+					transform,
+					calculateKey(nextTryChar(generateFrequency(transform
+							.length())) + ""));
 		}
 	}
 
@@ -269,39 +276,55 @@ public class KgModel extends Observable {
 		double[] measuredistance = new double[26];
 		measuredistance = definingMeasuredistance(measuredistance);
 		char z, y;
-		for (int j = 0; j < alphabetlength; j++) {
-			for (int i = 0; i < alphabetlength; i++) {
+		for (int j = 0; j < ALPHABETLENGTH; j++) {
+			for (int i = 0; i < ALPHABETLENGTH; i++) {
 				z = (char) (97 + i);
 				y = (char) (z + j);
 				if (y > 122) {
 					measuredistance[j] = measuredistance[j]
 							+ Math.abs(((double) signCount.get(z) / length)
 									* 100 - FREQUENCYTABLE.get((char) (y - 26)));
-					 System.out.print(z + ": "
-					 + ((((double) signCount.get(z)) / length) * 100)
-					 + "\t");
-					 System.out.println((char) (y-26) + ": "
-					 + FREQUENCYTABLE.get((char)(y-26)));
 				} else {
 					measuredistance[j] = measuredistance[j]
 							+ Math.abs((((double) signCount.get(z)) / length)
 									* 100 - FREQUENCYTABLE.get(y));
-					 System.out.print(z + ": "
-					 + ((((double) signCount.get(z)) / length) * 100)
-					 + "\t");
-					 System.out.println((char) (y) + ": "
-					 + FREQUENCYTABLE.get(y));
 				}
 			}
-			System.out.println(measuredistance[j]);
 		}
 		return measuredistance;
 	}
 
 	private char nextTryChar(double[] measuredistance) {
-		char trychar = 'a';
+		number = highestProbability(measuredistance);
+		return (char) (97 + (26 - number) % 26);
+	}
 
-		return trychar;
+	private int highestProbability(double[] measuredistance) {
+		double min = Double.MAX_VALUE;
+		int position = 0;
+		double maxvalue = maxvalue(measuredistance);
+		for (int i = 0; i < measuredistance.length; i++) {
+			if (measuredistance[i] > currentmin && measuredistance[i] < min) {
+				min = measuredistance[i];
+				position = i;
+			}
+		}
+		if (measuredistance[position] == maxvalue) {
+			currentmin = 0;
+		} else {
+			currentmin = min;
+		}
+		return position;
+	}
+
+	private double maxvalue(double[] measuredistance) {
+		double max = 0;
+		for (int i = 0; i < measuredistance.length; i++) {
+			if (measuredistance[i] > max) {
+				max = measuredistance[i];
+			}
+		}
+		return max;
 	}
 
 	private double[] definingMeasuredistance(double[] measuredistance) {
@@ -312,7 +335,7 @@ public class KgModel extends Observable {
 	}
 
 	private void clearHashtable() {
-		for (int i = 0; i < alphabetlength; i++) {
+		for (int i = 0; i < ALPHABETLENGTH; i++) {
 			signCount.put((char) (97 + i), 0);
 		}
 	}

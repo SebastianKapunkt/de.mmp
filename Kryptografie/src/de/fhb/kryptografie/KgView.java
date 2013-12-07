@@ -33,7 +33,6 @@ import java.awt.Dimension;
 import java.io.IOException;
 
 import javax.swing.JRadioButton;
-import javax.swing.ImageIcon;
 
 public class KgView extends JPanel implements ActionListener, Observer {
 
@@ -352,8 +351,7 @@ public class KgView extends JPanel implements ActionListener, Observer {
 						"No content at cipher text", "No value found",
 						JOptionPane.ERROR_MESSAGE);
 			} catch (WrongNumberFormatException e1) {
-				JOptionPane.showMessageDialog(this, "Unable to reach key",
-						"Error", JOptionPane.ERROR_MESSAGE);
+				e1.printStackTrace();
 			}
 		} else if (e.getSource() == btnDecipher
 				&& rdbtnEntschlsselnVigenere.isSelected()) {
