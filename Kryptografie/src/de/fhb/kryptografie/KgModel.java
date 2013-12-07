@@ -27,6 +27,8 @@ public class KgModel extends Observable {
 	private Hashtable<Character, Integer> signCount = new Hashtable<Character, Integer>();
 	private Hashtable<Character, Double> FREQUENCYTABLE = new Hashtable<Character, Double>();
 	private char trychar = 'e';
+	private String currentText = "";
+	private int alphabetlength = 26;
 
 	/**
 	 * IO-Elemente zum arbeiten mit Files
@@ -174,7 +176,7 @@ public class KgModel extends Observable {
 	 * @param transformed
 	 * @param key
 	 */
-	public void encipher(String transformed, String key) {
+	public void cipher(String transformed, String key) {
 		StringBuilder myText = new StringBuilder("");
 		int j = 0;
 
@@ -186,7 +188,7 @@ public class KgModel extends Observable {
 				myText.append((char) (transformed.charAt(i) + key.charAt(j)));
 			}
 			if (((char) transformed.charAt(i) + key.charAt(j)) > 122) {
-				myText.append((char) (transformed.charAt(i) + key.charAt(j) - 26));
+				myText.append((char) (transformed.charAt(i) + key.charAt(j) - alphabetlength));
 			}
 		}
 		cipherText = myText.toString().toUpperCase();
@@ -215,7 +217,7 @@ public class KgModel extends Observable {
 				myText.append((char) (transformed.charAt(i) - key.charAt(j)));
 			}
 			if ((transformed.charAt(i) - key.charAt(j)) < 97) {
-				myText.append((char) ((transformed.charAt(i) - key.charAt(j)) + 26));
+				myText.append((char) ((transformed.charAt(i) - key.charAt(j)) + alphabetlength));
 			}
 		}
 
@@ -227,30 +229,45 @@ public class KgModel extends Observable {
 	}
 
 	/**
-	 * Die Methode decipherCaesar entschlüsselt eine Text mit der Schlüssellänge
-	 * 1 auf Basis des Caesar Verfahrens
+	 * Die Methode decipherCaesar entschlüsselt einen Text mit der
+	 * Schlüssellänge 1 auf Basis des Caesar Verfahrens. Der Schlüssel ist nicht
+	 * bekannt.
 	 * 
 	 * @param transform
 	 */
-	public void decipherCaesar(String transform, boolean flagM)
+	public void decipherCaesar(String transform)
 			throws WrongNumberFormatException {
+		boolean flagM = true;
 		// Wenn flagM == true, dann wird das verfahren neu begonnen.
 		// flagM == false --> wird der nächst wahrscheinlichst Buchstabe
 		// genommen.
+
+		if (currentText.equals(transform)) {
+			flagM = false;
+		}
+
 		if (flagM) {
-			trychar = 'e';
+			currentText = transform;
 			clearHashtable();
 
+			// Zählt die Zeichen im verschlüsselten Text.
 			for (int i = 0; i < transform.length(); i++) {
 				signCount.put(transform.charAt(i),
 						signCount.get(transform.charAt(i)) + 1);
 			}
+
+//			trychar = generateFrequency(signCount, FREQUENCYTABLE);
+
+			// benutzt die Entschlüsselfunktion decipher mit dem errechneten
+			// Key.
 			decipher(
 					transform,
 					calculateKey(((char) calculatedifference(
 							getMostSign(signCount), trychar)) + ""));
 		} else {
+			// bestimmt das Zeichen welches das nächst wahrscheinlichste ist.
 			trychar = nextTryChar(trychar);
+			// benutzt die Entschlüsselfunktion decipher mit dem errechneten Key
 			decipher(
 					transform,
 					calculateKey(((char) calculatedifference(
@@ -258,11 +275,28 @@ public class KgModel extends Observable {
 		}
 	}
 
+//	private char generateFrequency(Hashtable<Character, Integer> signCount2,
+//			Hashtable<Character, Double> fREQUENCYTABLE2) {
+//			for(int i = 0; i <= alphabetlength; i++){
+//				
+//			}
+//		return 0;
+//	}
+
+	/**
+	 * Errechnet aus dem am meisten vorkommenden Zeichen des Verschlüsselten
+	 * Text und dem Wahrscheinlichsten Zeichen der deutschen Sprache den
+	 * Abestand um den Schlüssel zu bestimmen.
+	 * 
+	 * @param ms
+	 * @param trychar
+	 * @return sign
+	 */
 	private int calculatedifference(char ms, char trychar) {
 		int value = (int) ms - trychar;
 
 		if ((97 + value) < 97) {
-			value = 97 + value + 26;
+			value = 97 + value + alphabetlength;
 		} else {
 			value = 97 + value;
 		}
@@ -273,7 +307,7 @@ public class KgModel extends Observable {
 		Double max = FREQUENCYTABLE.get(trychar);
 		double newmax = 0;
 		char sign = 'e';
-		for (int i = 0; i < 26; i++) {
+		for (int i = 0; i < alphabetlength; i++) {
 			if (FREQUENCYTABLE.get((char) ('a' + i)) < max
 					&& FREQUENCYTABLE.get((char) ('a' + i)) > newmax) {
 				newmax = FREQUENCYTABLE.get((char) (97 + i));
@@ -286,7 +320,7 @@ public class KgModel extends Observable {
 	private char getMostSign(Hashtable<Character, Integer> signCount2) {
 		int max = 0;
 		char sign = 'e';
-		for (int i = 0; i < 26; i++) {
+		for (int i = 0; i < alphabetlength; i++) {
 			if (signCount2.get((char) (97 + i)) > max) {
 				max = signCount2.get((char) (97 + i));
 				sign = (char) (97 + i);
@@ -296,7 +330,7 @@ public class KgModel extends Observable {
 	}
 
 	private void clearHashtable() {
-		for (int i = 0; i < 26; i++) {
+		for (int i = 0; i < alphabetlength ; i++) {
 			signCount.put((char) (97 + i), 0);
 		}
 	}

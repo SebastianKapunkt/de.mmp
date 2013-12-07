@@ -44,12 +44,11 @@ public class KgView extends JPanel implements ActionListener, Observer {
 	JTextField keyField = new JTextField();
 
 	JButton plainClear = new JButton("clear");
-	JButton btnEncipher = new JButton("encipher -->");
+	JButton btnEncipher = new JButton("cipher -->");
 	JButton btnDecipher = new JButton("<-- decipher");
 	JButton cipherClear = new JButton("clear");
 	JButton btnChosePlainFile = new JButton("chose plain file");
 	JButton btnChoseCipherFile = new JButton("chose cipher file");
-	JButton btnN = new JButton("");
 
 	JLabel plainLabel = new JLabel("plain text");
 	JLabel keyLabel = new JLabel("key");
@@ -239,13 +238,6 @@ public class KgView extends JPanel implements ActionListener, Observer {
 		Component horizontalGlue_4 = Box.createHorizontalGlue();
 		horizontalBox_5.add(horizontalGlue_4);
 
-		btnN.setIcon(new ImageIcon(
-				KgView.class
-						.getResource("/com/sun/java/swing/plaf/windows/icons/Computer.gif")));
-		btnN.addActionListener(this);
-		btnN.setEnabled(false);
-		horizontalBox_5.add(btnN);
-
 		Component verticalStrut_3 = Box.createVerticalStrut(50);
 		verticalStrut_3.setMaximumSize(new Dimension(0, 50));
 		horizontalBox_5.add(verticalStrut_3);
@@ -312,7 +304,7 @@ public class KgView extends JPanel implements ActionListener, Observer {
 						|| plainArea.getText().isEmpty()) {
 					throw new NoValueFoundException();
 				} else {
-					model.encipher(model.transform(plainArea.getText()),
+					model.cipher(model.transform(plainArea.getText()),
 							model.calculateKey(keyField.getText()));
 				}
 			} catch (WrongNumberFormatException e1) {
@@ -353,8 +345,7 @@ public class KgView extends JPanel implements ActionListener, Observer {
 				if (cipherArea.getText().isEmpty()) {
 					throw new NoValueFoundException();
 				} else {
-					model.decipherCaesar(model.transform(cipherArea.getText()),
-							true);
+					model.decipherCaesar(model.transform(cipherArea.getText()));
 				}
 			} catch (NoValueFoundException e1) {
 				JOptionPane.showMessageDialog(this,
@@ -377,15 +368,6 @@ public class KgView extends JPanel implements ActionListener, Observer {
 				JOptionPane.showMessageDialog(this,
 						"No content at cipher text", "No value found",
 						JOptionPane.ERROR_MESSAGE);
-			}
-		}
-		// BtnN ('retry') Action
-		if (e.getSource() == btnN) {
-			try {
-				model.decipherCaesar(model.transform(cipherArea.getText()), false);
-			} catch (WrongNumberFormatException e1) {
-				JOptionPane.showMessageDialog(this, "Unable to reach key",
-						"Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		// Ciphertext clear Button Action
@@ -423,7 +405,7 @@ public class KgView extends JPanel implements ActionListener, Observer {
 			changemode();
 			clear();
 		}
-		// Radiobutton Entschlsseln Action
+		// Radiobutton Entschlüsseln Action
 		if (e.getSource() == rdbtnEntschlsseln) {
 			changemode();
 
@@ -446,13 +428,11 @@ public class KgView extends JPanel implements ActionListener, Observer {
 			btnChosePlainFile.setEnabled(true);
 			keyField.setEditable(true);
 			plainArea.setEditable(true);
-			btnN.setEnabled(false);
 		} else {
 			btnEncipher.setEnabled(false);
 			btnChosePlainFile.setEnabled(false);
 			keyField.setEditable(false);
 			plainArea.setEditable(false);
-			btnN.setEnabled(true);
 		}
 	}
 
