@@ -108,6 +108,7 @@ public class KgView extends JPanel implements ActionListener, Observer {
 
 		rdbtnEntschlsselnVigenere.addActionListener(this);
 		rdbtnEntschlsselnVigenere.setActionCommand("V");
+		rdbtnEntschlsselnVigenere.setEnabled(false);
 		group.add(rdbtnEntschlsselnVigenere);
 
 		Component horizontalGlue_3 = Box.createHorizontalGlue();

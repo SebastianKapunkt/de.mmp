@@ -177,19 +177,12 @@ public class KgModel extends Observable {
 	 */
 	public void cipher(String transformed, String key) {
 		StringBuilder myText = new StringBuilder("");
-		int j = 0;
 
-		for (int i = 0; i < transformed.length(); i++, j++) {
+		for (int i = 0, j = 0; i < transformed.length(); i++, j++) {
 			if (j == key.length()) {
 				j = 0;
 			}
-			if ((transformed.charAt(i) + key.charAt(j)) <= 122) {
-				myText.append((char) (transformed.charAt(i) + key.charAt(j)));
-			}
-			if (((char) transformed.charAt(i) + key.charAt(j)) > 122) {
-				myText.append((char) (transformed.charAt(i) + key.charAt(j) - ALPHABETLENGTH));
-			}
-//			myText.append((char) (transformed.charAt(i) + key.charAt(j))%122 );
+			myText.append((char) ((transformed.charAt(i) - 97 + key.charAt(j)) % 26 + 97));
 		}
 		cipherText = myText.toString().toUpperCase();
 		plainText = transformed;
@@ -207,18 +200,12 @@ public class KgModel extends Observable {
 	 */
 	public void decipher(String transformed, String key) {
 		StringBuilder myText = new StringBuilder("");
-		int j = 0;
 
-		for (int i = 0; i < transformed.length(); i++, j++) {
+		for (int i = 0, j = 0; i < transformed.length(); i++, j++) {
 			if (j == key.length()) {
 				j = 0;
 			}
-			if ((transformed.charAt(i) - key.charAt(j)) >= 97) {
-				myText.append((char) (transformed.charAt(i) - key.charAt(j)));
-			}
-			if ((transformed.charAt(i) - key.charAt(j)) < 97) {
-				myText.append((char) ((transformed.charAt(i) - key.charAt(j)) + ALPHABETLENGTH));
-			}
+			myText.append((char) ((26 - key.charAt(j) + transformed.charAt(i) - 97) % 26 + 97));
 		}
 
 		plainText = myText.toString().toLowerCase();
@@ -280,15 +267,11 @@ public class KgModel extends Observable {
 			for (int i = 0; i < ALPHABETLENGTH; i++) {
 				z = (char) (97 + i);
 				y = (char) (z + j);
-				if (y > 122) {
-					measuredistance[j] = measuredistance[j]
-							+ Math.abs(((double) signCount.get(z) / length)
-									* 100 - FREQUENCYTABLE.get((char) (y - 26)));
-				} else {
-					measuredistance[j] = measuredistance[j]
-							+ Math.abs((((double) signCount.get(z)) / length)
-									* 100 - FREQUENCYTABLE.get(y));
-				}
+				measuredistance[j] = measuredistance[j]
+						+ Math.abs(((double) signCount.get(z) / length)
+								* 100
+								- FREQUENCYTABLE
+										.get((char) ((y - 97) % 26 + 97)));
 			}
 		}
 		return measuredistance;
