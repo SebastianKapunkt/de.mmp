@@ -261,7 +261,7 @@ public class KgView extends JPanel implements ActionListener, Observer {
 						|| plainArea.getText().isEmpty()) {
 					throw new NoValueFoundException();
 				} else {
-					model.encipher(model.transform(plainArea.getText()),
+					model.cipher(model.transform(plainArea.getText()),
 							model.calculateKey(keyField.getText()));
 				}
 			} catch (WrongNumberFormatException e1) {
