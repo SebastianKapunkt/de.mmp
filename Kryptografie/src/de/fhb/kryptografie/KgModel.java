@@ -26,9 +26,16 @@ public class KgModel extends Observable {
 	private String key;
 	private Hashtable<Character, Integer> signCount = new Hashtable<Character, Integer>();
 	private Hashtable<Character, Double> FREQUENCYTABLE = new Hashtable<Character, Double>();
+	// number: enhält die distance mit der verschlüsselt wurde.
 	private int number = 0;
+	// currentText: merkt sich den aktuellen Text zum vergleich ob mit einem
+	// anderen gearbeitet wird
 	private String currentText = "";
+	// currentmin: enthält die aktuell niedrigste und somit Wahrscheinlichste
+	// measure-distance.
 	private double currentmin = 0;
+	// ALPHABETLENGTH: constante die die anzahl Zeichen der "Sprache" enhält.
+	// Deutsch: 26 Zeichen a-z
 	private int ALPHABETLENGTH = 26;
 	/**
 	 * IO-Elemente zum arbeiten mit Files
@@ -58,16 +65,16 @@ public class KgModel extends Observable {
 	/**
 	 * Setter für Key, PlainText, CypherText und signCount
 	 */
-	public void setCypherText(String cypherText) {
-		this.cipherText = cypherText;
+	public void setKey(String key) {
+		this.key = key;
 	}
 
 	public void setPlainText(String plainText) {
 		this.plainText = plainText;
 	}
 
-	public void setKey(String key) {
-		this.key = key;
+	public void setCypherText(String cypherText) {
+		this.cipherText = cypherText;
 	}
 
 	public void setSignCount(Hashtable<Character, Integer> keyfrequent) {
@@ -169,7 +176,7 @@ public class KgModel extends Observable {
 	}
 
 	/**
-	 * Die Methode enciher chiffriert einen String mit einem gegebenen Key auf
+	 * Die Methode cipher chiffriert einen String mit einem gegebenen Key auf
 	 * der Basis des Vigenère Verfahrens.
 	 * 
 	 * @param transformed
@@ -217,8 +224,8 @@ public class KgModel extends Observable {
 
 	/**
 	 * Die Methode decipherCaesar entschlüsselt einen Text mit der
-	 * Schlüssellänge 1 auf Basis des Caesar Verfahrens. Der Schlüssel ist nicht
-	 * bekannt.
+	 * Schlüssellänge 1, auf Basis des Caesar Verfahrens. Der Schlüssel ist
+	 * nicht bekannt.
 	 * 
 	 * @param transform
 	 */
@@ -226,32 +233,44 @@ public class KgModel extends Observable {
 			throws WrongNumberFormatException {
 		boolean flagM = true;
 		// Wenn flagM == true, dann wird das verfahren neu begonnen.
-		// flagM == false --> wird der nächst wahrscheinlichst Buchstabe
+		// flagM == false --> dann wird der nächst wahrscheinlichst Buchstabe
 		// genommen.
 
 		// Überprüft Ob ein neuer Versuch gestartet wurde oder
 		// ein anderer chiffre Text eingegeben wurde
+		// anhand des Textes der im String transform steht
 		if (currentText.equals(transform)) {
 			flagM = false;
 		}
 
 		if (flagM) {
+			// Wird auf null gesetzt damit die Wahrscheinlichkeiten wieder von
+			// vorne durchgegagnen werden können.
 			number = 0;
+			// Setzt den currentText gleich dem Aktuellen Text mit dem
+			// gearbeitet wird
 			currentText = transform;
+			// Setzt currentmin auf den Anfangswert zurück
 			currentmin = 0;
+			// leert die Hashtable Signcount, bzw. setzt sie zurück auf 0.
 			clearHashtable();
 
+			// liest die zeichen des Textes von transform in signCount ein
 			for (int i = 0; i < transform.length(); i++) {
 				signCount.put(transform.charAt(i),
 						signCount.get(transform.charAt(i)) + 1);
 			}
 
+			// ruft die entschlüsselungsmethde decipher auf mit
+			// transform und dem berechneten Schlüssel
 			decipher(
 					transform,
 					calculateKey(nextTryChar(generateFrequency(transform
 							.length())) + ""));
 		} else {
 
+			// ruft die entschlüsselungsmethde decipher auf mit
+			// transform und dem berechneten Schlüssel
 			decipher(
 					transform,
 					calculateKey(nextTryChar(generateFrequency(transform
@@ -259,6 +278,15 @@ public class KgModel extends Observable {
 		}
 	}
 
+	/**
+	 * generateFrequency berechnet die Distanz von den Wahrscheinlichkeiten des
+	 * vorkommens eines Buchstabens in der Deutschen Sprache und in dem Zu
+	 * entschlüsselnden Texts nach der Formel: Summe( | ha(c) - hb(c) | ) und
+	 * gibt diese in einem Array zurück.
+	 * 
+	 * @param length
+	 * @return double Array measuredistance
+	 */
 	private double[] generateFrequency(int length) {
 		double[] measuredistance = new double[26];
 		measuredistance = definingMeasuredistance(measuredistance);
@@ -277,21 +305,39 @@ public class KgModel extends Observable {
 		return measuredistance;
 	}
 
+	/**
+	 * Bestimmt den Buchstaben mit dem als nächstes Entschlüsselt wird. Gibt
+	 * einen Buchstaben zurück.
+	 * 
+	 * @param double Array easuredistance
+	 * @return (char)
+	 */
 	private char nextTryChar(double[] measuredistance) {
 		number = highestProbability(measuredistance);
 		return (char) (97 + (26 - number) % 26);
 	}
 
+	/**
+	 * Berechnet die minimale Distanz um die höchste Wahrscheinlichkeit
+	 * auszuwählen Unterbeachtung des vohrigen minimalen Wertes
+	 * 
+	 * @param measuredistance
+	 * @return position
+	 */
 	private int highestProbability(double[] measuredistance) {
 		double min = Double.MAX_VALUE;
 		int position = 0;
+		// bestimmen der Obergrenze
 		double maxvalue = maxvalue(measuredistance);
+
+		// bestimmen des minimalen wertes
 		for (int i = 0; i < measuredistance.length; i++) {
 			if (measuredistance[i] > currentmin && measuredistance[i] < min) {
 				min = measuredistance[i];
 				position = i;
 			}
 		}
+		// Bedingung damit wieder von vorne bestimmt wird
 		if (measuredistance[position] == maxvalue) {
 			currentmin = 0;
 		} else {
@@ -300,6 +346,12 @@ public class KgModel extends Observable {
 		return position;
 	}
 
+	/**
+	 * Bestimmt aus einem Double Array den maximalen Wert.
+	 * 
+	 * @param measuredistance
+	 * @return max
+	 */
 	private double maxvalue(double[] measuredistance) {
 		double max = 0;
 		for (int i = 0; i < measuredistance.length; i++) {
@@ -310,6 +362,12 @@ public class KgModel extends Observable {
 		return max;
 	}
 
+	/**
+	 * Deklariert eine Hashtabel mit 0 für a-z
+	 * 
+	 * @param measuredistance
+	 * @return
+	 */
 	private double[] definingMeasuredistance(double[] measuredistance) {
 		for (int i = 0; i < measuredistance.length; i++) {
 			measuredistance[i] = 0;
@@ -317,12 +375,19 @@ public class KgModel extends Observable {
 		return measuredistance;
 	}
 
+	/**
+	 * Setz die Werte der Hashtable auf 0 für a-z
+	 */
 	private void clearHashtable() {
 		for (int i = 0; i < ALPHABETLENGTH; i++) {
 			signCount.put((char) (97 + i), 0);
 		}
 	}
 
+	/**
+	 * Deklarieren eine Hastabel für a-z mit den Wahrscheinlichkeiten des
+	 * vorkmmen eines Buchstaben in der deutschen Sprache
+	 */
 	public void generateConstSignProbability() {
 		FREQUENCYTABLE.put('a', 6.51);
 		FREQUENCYTABLE.put('b', 1.89);
@@ -352,7 +417,8 @@ public class KgModel extends Observable {
 		FREQUENCYTABLE.put('z', 1.13);
 	}
 
-	public void decipherVigenere(String transform) {
-		// TODO Auto-generated method stub
-	}
+	// Vorbereiteter Quellcode zur Erweiterung von Vigenere entschlüsseln
+	// public void decipherVigenere(String transform) {
+	// // TODO Auto-generated method stub
+	// }
 }

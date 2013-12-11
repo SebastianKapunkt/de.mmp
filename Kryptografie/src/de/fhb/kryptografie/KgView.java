@@ -63,8 +63,10 @@ public class KgView extends JPanel implements ActionListener, Observer {
 
 	JRadioButton rdbtnNormal = new JRadioButton("normal");
 	JRadioButton rdbtnEntschlsseln = new JRadioButton("decrypt Caesar");
-	JRadioButton rdbtnEntschlsselnVigenere = new JRadioButton(
-			"decrypt Vigenere");
+
+	// Vorbereiteter Quellcode zur Erweiterung von Vigenere entschlüsseln
+	// JRadioButton rdbtnEntschlsselnVigenere = new JRadioButton(
+	// "decrypt Vigenere");
 
 	public KgView(KgModel model) {
 		this.model = model;
@@ -104,12 +106,14 @@ public class KgView extends JPanel implements ActionListener, Observer {
 		rdbtnEntschlsseln.addActionListener(this);
 		rdbtnEntschlsseln.setActionCommand("C");
 		group.add(rdbtnEntschlsseln);
-		horizontalBox_1.add(rdbtnEntschlsselnVigenere);
 
-		rdbtnEntschlsselnVigenere.addActionListener(this);
-		rdbtnEntschlsselnVigenere.setActionCommand("V");
-		rdbtnEntschlsselnVigenere.setEnabled(false);
-		group.add(rdbtnEntschlsselnVigenere);
+		// Vorbereiteter Quellcode zur Erweiterung von Vigenere entschlüsseln
+		// horizontalBox_1.add(rdbtnEntschlsselnVigenere);
+		//
+		// rdbtnEntschlsselnVigenere.addActionListener(this);
+		// rdbtnEntschlsselnVigenere.setActionCommand("V");
+		// rdbtnEntschlsselnVigenere.setEnabled(false);
+		// group.add(rdbtnEntschlsselnVigenere);
 
 		Component horizontalGlue_3 = Box.createHorizontalGlue();
 		horizontalBox_1.add(horizontalGlue_3);
@@ -354,21 +358,25 @@ public class KgView extends JPanel implements ActionListener, Observer {
 			} catch (WrongNumberFormatException e1) {
 				e1.printStackTrace();
 			}
-		} else if (e.getSource() == btnDecipher
-				&& rdbtnEntschlsselnVigenere.isSelected()) {
-			readInputCypherArea();
-			try {
-				if (cipherArea.getText().isEmpty()) {
-					throw new NoValueFoundException();
-				} else {
-					model.decipherVigenere(model.transform(cipherArea.getText()));
-				}
-			} catch (NoValueFoundException e1) {
-				JOptionPane.showMessageDialog(this,
-						"No content at cipher text", "No value found",
-						JOptionPane.ERROR_MESSAGE);
-			}
 		}
+
+		// Vorbereiteter Quellcode zur Erweiterung von Vigenere entschlüsseln
+		// else if (e.getSource() == btnDecipher
+		// && rdbtnEntschlsselnVigenere.isSelected()) {
+		// readInputCypherArea();
+		// try {
+		// if (cipherArea.getText().isEmpty()) {
+		// throw new NoValueFoundException();
+		// } else {
+		// model.decipherVigenere(model.transform(cipherArea.getText()));
+		// }
+		// } catch (NoValueFoundException e1) {
+		// JOptionPane.showMessageDialog(this,
+		// "No content at cipher text", "No value found",
+		// JOptionPane.ERROR_MESSAGE);
+		// }
+		// }
+
 		// Ciphertext clear Button Action
 		if (e.getSource() == cipherClear) {
 			cipherArea.setText("");
@@ -410,11 +418,13 @@ public class KgView extends JPanel implements ActionListener, Observer {
 
 			clear();
 		}
+
+		// Vorbereiteter Quellcode zur Erweiterung von Vigenere entschlüsseln
 		// Radiobutton EntschlsselnVigenere Action
-		if (e.getSource() == rdbtnEntschlsselnVigenere) {
-			changemode();
-			clear();
-		}
+		// if (e.getSource() == rdbtnEntschlsselnVigenere) {
+		// changemode();
+		// clear();
+		// }
 	}
 
 	/**
