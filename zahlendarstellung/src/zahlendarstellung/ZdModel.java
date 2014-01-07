@@ -1,29 +1,52 @@
 package zahlendarstellung;
 
-public class ZdModel {
+import java.util.Observable;
 
-	public static void main(String args[]) {
-		String inputnumber = "ABCDEF";
-		int inputnumbersystem = 35;
-		int outputnumbersystem = 35;
-		String outputnumber = "0";
-		int number[] = new int[inputnumber.length()];
+public class ZdModel extends Observable {
+	private String outputnumber;
+	private int number[];
 
-		// Array erzeugen
-		number = transformToArray(inputnumber, number);
-		System.out.println("array: ");
-		ausgabenumber(number);
+	public String getOutputnumber() {
+		return outputnumber;
+	}
 
-		// Überprüfen auf ungültige Zeichen
-		checknumber(number, inputnumbersystem);
+	public void setOutputnumber(String outputnumber) {
+		this.outputnumber = outputnumber;
+	}
 
-		// von einem belibigen system ins 10ner System Transformieren
-		int zw = transformToTen(number, inputnumbersystem);
-		System.out.println("zw: " + zw);
+	public int[] getNumber() {
+		return number;
+	}
 
-		// Vom 10ner in ein belibiges System umwandeln
-		outputnumber = transformFromTen(zw, outputnumbersystem);
-		System.out.println("outputnumber: " + outputnumber);
+	public void setNumber(int[] number) {
+		this.number = number;
+	}
+
+	// public static void main(String args[]) {
+	// String inputnumber = "ABCDEF";
+	// int inputnumbersystem = 35;
+	// int outputnumbersystem = 35;
+	// String outputnumber = "0";
+	// int number[] = new int[inputnumber.length()];
+	//
+	// // Array erzeugen
+	// number = transformToArray(inputnumber, number);
+	// System.out.println("array: ");
+	// ausgabenumber(number);
+	//
+	// // Überprüfen auf ungültige Zeichen
+	// checknumber(number, inputnumbersystem);
+	//
+	// // von einem belibigen system ins 10ner System Transformieren
+	// int zw = transformToTen(number, inputnumbersystem);
+	// System.out.println("zw: " + zw);
+	//
+	// // Vom 10ner in ein belibiges System umwandeln
+	// outputnumber = transformFromTen(zw, outputnumbersystem);
+	// System.out.println("outputnumber: " + outputnumber);
+	// }
+	public ZdModel() {
+		outputnumber = "";
 	}
 
 	/**
@@ -34,10 +57,11 @@ public class ZdModel {
 	 * geliefert.
 	 * 
 	 * @param inputnumber
-	 * @param number
 	 * @return int array
+	 * @throws WrongInputException 
 	 */
-	private static int[] transformToArray(String inputnumber, int[] number) {
+	public int[] transformToArray(String inputnumber) throws WrongInputException {
+		number = new int[inputnumber.length()];
 		for (int i = 0; i < inputnumber.length(); i++) {
 			if (inputnumber.charAt(i) >= 'a' && inputnumber.charAt(i) <= 'z') {
 				number[i] = inputnumber.charAt(i) - 'a' + 10;
@@ -48,18 +72,10 @@ public class ZdModel {
 					&& inputnumber.charAt(i) <= '9') {
 				number[i] = inputnumber.charAt(i) - '0';
 			} else {
-				System.out.println("Ungueltige eingabe");
+				throw new WrongInputException();
 			}
 		}
 		return number;
-	}
-
-	// Nur zur überprüfung für das spätere programm nicht notwendig
-	private static void ausgabenumber(int[] number) {
-		for (int i = 0; i < number.length; i++) {
-			System.out.println(number[i]);
-		}
-
 	}
 
 	/**
@@ -67,13 +83,17 @@ public class ZdModel {
 	 * Zeichen enthalten sind die in dem System nicht zulässig sind. Und wirft
 	 * bei bedarf einen Error
 	 * 
-	 * @param number
-	 * @param system
+	 * @param inputsystem
+	 * @throws WrongNumberInputException 
+	 * @throws ToBigSystemException 
 	 */
-	public static void checknumber(int[] number, int system) {
+	public void checknumber(int inputsystem) throws WrongNumberInputException, ToBigSystemException {
 		for (int i = 0; i < number.length; i++) {
-			if (number[i] >= system) {
-				System.out.println("Error");
+			if (number[i] >= inputsystem) {
+				throw new WrongNumberInputException();
+			}
+			if(inputsystem > 36){
+				throw new ToBigSystemException();
 			}
 		}
 	}
@@ -83,11 +103,10 @@ public class ZdModel {
 	 * 10ner System. z.B.: hex: F zu dez: 15 Unter der Verwendung des
 	 * Honorschemas.
 	 * 
-	 * @param number
 	 * @param inputnumbersystem
 	 * @return Zahl im Zehnersystem
 	 */
-	private static int transformToTen(int[] number, int inputnumbersystem) {
+	public int transformToTen(int inputnumbersystem) {
 		int erg = number[0];
 		for (int i = 1; i < number.length; i++) {
 			erg = erg * inputnumbersystem + number[i];
@@ -102,15 +121,22 @@ public class ZdModel {
 	 * @param number
 	 * @param outputnumbersystem
 	 * @return Zielsystem Zahl
+	 * @throws ToBigSystemException 
 	 */
-	private static String transformFromTen(int number, int outputnumbersystem) {
+	public void transformFromTen(int number, int outputnumbersystem) throws ToBigSystemException {
 		StringBuffer outnumber = new StringBuffer();
+		if(outputnumbersystem > 36){
+			throw new ToBigSystemException();
+		}
 		int erg = number;
 		while (erg != 0) {
 			outnumber.append(convertToSymbol(erg % outputnumbersystem));
 			erg = erg / outputnumbersystem;
 		}
-		return outnumber.reverse().toString();
+
+		outputnumber = outnumber.reverse().toString();
+		setChanged();
+		notifyObservers();
 	}
 
 	/**
@@ -119,14 +145,13 @@ public class ZdModel {
 	 * @param i
 	 * @return umgewandeltes Zeichen
 	 */
-	private static char convertToSymbol(int i) {
+	public static char convertToSymbol(int i) {
 		char symbol;
 		if (i > 9) {
 			symbol = (char) (i + 55);
 		} else {
 			symbol = (char) (i + 48);
 		}
-		System.out.println("Symbol: " + symbol);
 		return symbol;
 	}
 }
