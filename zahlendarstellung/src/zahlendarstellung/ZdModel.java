@@ -3,9 +3,9 @@ package zahlendarstellung;
 public class ZdModel {
 
 	public static void main(String args[]) {
-		String inputnumber = "1";
-		int inputnumbersystem = 1;
-		int outputnumbersystem = 10;
+		String inputnumber = "ABCDEF";
+		int inputnumbersystem = 35;
+		int outputnumbersystem = 35;
 		String outputnumber = "0";
 		int number[] = new int[inputnumber.length()];
 
@@ -27,10 +27,10 @@ public class ZdModel {
 	}
 
 	/**
-	 * Zerlegt die ausgangs Zahl in ein Integer-Array und filter ungültige
-	 * Zeichen heraus. z.B.: &, % oder =
+	 * Zerlegt die ausgangs Zahl in ein Integer-Array und meldet ungültige
+	 * Zeichen. z.B.: &, % oder = --> Error
 	 * 
-	 * Alsrückgabe wird ein int Array gefüllt mit den umgewandelten Werten
+	 * Als Rückgabe wird ein int Array, gefüllt mit den umgewandelten Werten ,
 	 * geliefert.
 	 * 
 	 * @param inputnumber
@@ -64,7 +64,8 @@ public class ZdModel {
 
 	/**
 	 * Überprüft das Array mit dem inhalt der einzelnen Zeichen der Zahl ob
-	 * Zeichen enthalten sind die in dem System nicht zulässig sind.
+	 * Zeichen enthalten sind die in dem System nicht zulässig sind. Und wirft
+	 * bei bedarf einen Error
 	 * 
 	 * @param number
 	 * @param system
@@ -84,7 +85,7 @@ public class ZdModel {
 	 * 
 	 * @param number
 	 * @param inputnumbersystem
-	 * @return
+	 * @return Zahl im Zehnersystem
 	 */
 	private static int transformToTen(int[] number, int inputnumbersystem) {
 		int erg = number[0];
@@ -100,15 +101,32 @@ public class ZdModel {
 	 * 
 	 * @param number
 	 * @param outputnumbersystem
-	 * @return
+	 * @return Zielsystem Zahl
 	 */
 	private static String transformFromTen(int number, int outputnumbersystem) {
 		StringBuffer outnumber = new StringBuffer();
 		int erg = number;
 		while (erg != 0) {
-			outnumber.append(erg % outputnumbersystem);
+			outnumber.append(convertToSymbol(erg % outputnumbersystem));
 			erg = erg / outputnumbersystem;
 		}
 		return outnumber.reverse().toString();
+	}
+
+	/**
+	 * Wandelt den int Wert einer Zahl in ein Zeichen um. z.B.: 15 zu F
+	 * 
+	 * @param i
+	 * @return umgewandeltes Zeichen
+	 */
+	private static char convertToSymbol(int i) {
+		char symbol;
+		if (i > 9) {
+			symbol = (char) (i + 55);
+		} else {
+			symbol = (char) (i + 48);
+		}
+		System.out.println("Symbol: " + symbol);
+		return symbol;
 	}
 }
