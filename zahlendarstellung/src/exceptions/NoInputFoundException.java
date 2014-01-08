@@ -1,4 +1,4 @@
-package zahlendarstellung;
+package exceptions;
 
 public class NoInputFoundException extends Exception {
 	public NoInputFoundException() {

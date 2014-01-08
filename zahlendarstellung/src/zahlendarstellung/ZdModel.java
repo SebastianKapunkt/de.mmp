@@ -2,6 +2,12 @@ package zahlendarstellung;
 
 import java.util.Observable;
 
+import exceptions.ToBigSystemException;
+import exceptions.ToSmallSystemException;
+import exceptions.ValueToBigException;
+import exceptions.WrongInputException;
+import exceptions.WrongNumberInputException;
+
 public class ZdModel extends Observable {
 	private String outputnumber, inputnumber;
 	private int inputsystem, outputsystem;

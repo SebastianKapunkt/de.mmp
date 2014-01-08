@@ -1,4 +1,4 @@
-package zahlendarstellung;
+package exceptions;
 
 public class WrongNumberInputException extends Exception {
 

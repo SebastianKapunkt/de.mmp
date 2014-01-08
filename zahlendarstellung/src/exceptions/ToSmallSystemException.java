@@ -1,4 +1,4 @@
-package zahlendarstellung;
+package exceptions;
 
 public class ToSmallSystemException extends Exception {
 	public ToSmallSystemException() {

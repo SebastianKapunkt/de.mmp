@@ -1,4 +1,4 @@
-package zahlendarstellung;
+package exceptions;
 
 public class ValueToBigException extends Exception {
 	public ValueToBigException() {

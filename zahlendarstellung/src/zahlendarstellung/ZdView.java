@@ -7,6 +7,13 @@ import java.util.Observer;
 
 import javax.swing.*;
 
+import exceptions.NoInputFoundException;
+import exceptions.ToBigSystemException;
+import exceptions.ToSmallSystemException;
+import exceptions.ValueToBigException;
+import exceptions.WrongInputException;
+import exceptions.WrongNumberInputException;
+
 /**
  * Erstellt das GUI, überprüft die Eingabe und zeigt das Ergebnis der Berechnung
  * des Models an übernimmt somit die Rolle der View und des Controllers
@@ -205,10 +212,12 @@ public class ZdView extends JPanel implements ActionListener, Observer {
 				JOptionPane.showMessageDialog(this,
 						"ein oder mehrere Eingabefelder sind leer",
 						"Eingabefehler", JOptionPane.ERROR_MESSAGE);
-			} catch (NumberFormatException e1){
-				JOptionPane.showMessageDialog(this,
-						"Input und/oder Output System ist/sind keine ganze Zahl",
-						"Eingabefehler", JOptionPane.ERROR_MESSAGE);
+			} catch (NumberFormatException e1) {
+				JOptionPane
+						.showMessageDialog(
+								this,
+								"Input und/oder Output System ist/sind keine ganze Zahl",
+								"Eingabefehler", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		if (e.getSource() == btnClear) {
