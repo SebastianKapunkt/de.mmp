@@ -3,7 +3,8 @@ package zahlendarstellung;
 import java.util.Observable;
 
 public class ZdModel extends Observable {
-	private String outputnumber;
+	private String outputnumber, inputnumber;
+	private int inputsystem, outputsystem;
 	private int number[];
 
 	public String getOutputnumber() {
@@ -22,29 +23,30 @@ public class ZdModel extends Observable {
 		this.number = number;
 	}
 
-	// public static void main(String args[]) {
-	// String inputnumber = "ABCDEF";
-	// int inputnumbersystem = 35;
-	// int outputnumbersystem = 35;
-	// String outputnumber = "0";
-	// int number[] = new int[inputnumber.length()];
-	//
-	// // Array erzeugen
-	// number = transformToArray(inputnumber, number);
-	// System.out.println("array: ");
-	// ausgabenumber(number);
-	//
-	// // Überprüfen auf ungültige Zeichen
-	// checknumber(number, inputnumbersystem);
-	//
-	// // von einem belibigen system ins 10ner System Transformieren
-	// int zw = transformToTen(number, inputnumbersystem);
-	// System.out.println("zw: " + zw);
-	//
-	// // Vom 10ner in ein belibiges System umwandeln
-	// outputnumber = transformFromTen(zw, outputnumbersystem);
-	// System.out.println("outputnumber: " + outputnumber);
-	// }
+	public String getInputnumber() {
+		return inputnumber;
+	}
+
+	public void setInputnumber(String inputnumber) {
+		this.inputnumber = inputnumber;
+	}
+
+	public int getInputsystem() {
+		return inputsystem;
+	}
+
+	public void setInputsystem(int inputsystem) {
+		this.inputsystem = inputsystem;
+	}
+
+	public int getOutputsystem() {
+		return outputsystem;
+	}
+
+	public void setOutputsystem(int outputsystem) {
+		this.outputsystem = outputsystem;
+	}
+
 	public ZdModel() {
 		outputnumber = "";
 	}
@@ -58,9 +60,10 @@ public class ZdModel extends Observable {
 	 * 
 	 * @param inputnumber
 	 * @return int array
-	 * @throws WrongInputException 
+	 * @throws WrongInputException
 	 */
-	public int[] transformToArray(String inputnumber) throws WrongInputException {
+	public int[] transformToArray(String inputnumber)
+			throws WrongInputException {
 		number = new int[inputnumber.length()];
 		for (int i = 0; i < inputnumber.length(); i++) {
 			if (inputnumber.charAt(i) >= 'a' && inputnumber.charAt(i) <= 'z') {
@@ -84,16 +87,21 @@ public class ZdModel extends Observable {
 	 * bei bedarf einen Error
 	 * 
 	 * @param inputsystem
-	 * @throws WrongNumberInputException 
-	 * @throws ToBigSystemException 
+	 * @throws WrongNumberInputException
+	 * @throws ToBigSystemException
+	 * @throws ToSmallSystemException
 	 */
-	public void checknumber(int inputsystem) throws WrongNumberInputException, ToBigSystemException {
+	public void checknumber(int inputsystem) throws WrongNumberInputException,
+			ToBigSystemException, ToSmallSystemException {
 		for (int i = 0; i < number.length; i++) {
 			if (number[i] >= inputsystem) {
 				throw new WrongNumberInputException();
 			}
-			if(inputsystem > 36){
+			if (inputsystem > 36) {
 				throw new ToBigSystemException();
+			}
+			if (inputsystem < 2) {
+				throw new ToSmallSystemException();
 			}
 		}
 	}
@@ -105,13 +113,17 @@ public class ZdModel extends Observable {
 	 * 
 	 * @param inputnumbersystem
 	 * @return Zahl im Zehnersystem
+	 * @throws ValueToBigException
 	 */
-	public int transformToTen(int inputnumbersystem) {
-		int erg = number[0];
+	public int transformToTen(int inputnumbersystem) throws ValueToBigException {
+		long erg = number[0];
 		for (int i = 1; i < number.length; i++) {
 			erg = erg * inputnumbersystem + number[i];
+			if (erg > Integer.MAX_VALUE) {
+				throw new ValueToBigException();
+			}
 		}
-		return erg;
+		return (int) erg;
 	}
 
 	/**
@@ -121,17 +133,22 @@ public class ZdModel extends Observable {
 	 * @param number
 	 * @param outputnumbersystem
 	 * @return Zielsystem Zahl
-	 * @throws ToBigSystemException 
+	 * @throws ToBigSystemException
+	 * @throws ToSmallSystemException
 	 */
-	public void transformFromTen(int number, int outputnumbersystem) throws ToBigSystemException {
+	public void transformFromTen(int number, int outputnumbersystem)
+			throws ToBigSystemException, ToSmallSystemException {
 		StringBuffer outnumber = new StringBuffer();
-		if(outputnumbersystem > 36){
+		if (outputnumbersystem > 36) {
 			throw new ToBigSystemException();
 		}
-		int erg = number;
-		while (erg != 0) {
-			outnumber.append(convertToSymbol(erg % outputnumbersystem));
-			erg = erg / outputnumbersystem;
+		if (outputnumbersystem < 2) {
+			throw new ToSmallSystemException();
+		}
+
+		while (number != 0) {
+			outnumber.append(convertToSymbol(number % outputnumbersystem));
+			number = number / outputnumbersystem;
 		}
 
 		outputnumber = outnumber.reverse().toString();
