@@ -28,13 +28,31 @@ public class ZdView extends JPanel implements ActionListener, Observer {
 	private JTextField outputnumber = new JTextField();;
 	private JTextField outputsystem = new JTextField();;
 
+	private JTextField controlresult = new JTextField();
+	private JTextField a = new JTextField();
+	private JTextField n = new JTextField();
+	private JTextField m = new JTextField();
+	private JTextField result = new JTextField();
+
+	JLabel lblNumbersystem = new JLabel(
+			"Numbersystem 2-36 for Integer numbers");
 	JLabel inNuLabel = new JLabel("input Number:");
 	JLabel inSyLabel = new JLabel("input System: ");
 	JLabel ouNuLabel = new JLabel("output Number:");
 	JLabel ouSyLabel = new JLabel("output System:");
+	
+	JLabel lblModularePotenz = new JLabel("Modulare Potenz");
+	JLabel lblA = new JLabel("a ");
+	JLabel lblN = new JLabel("n ");
+	JLabel lblModM = new JLabel("mod m");
+	JLabel lblAnmodm = new JLabel("a^n mod m");
+	JLabel lblControlValue = new JLabel("control Value");
 
 	JButton btnConvert = new JButton("convert");
 	JButton btnClear = new JButton("clear");
+	
+	JButton btnis = new JButton("=");
+
 
 	public ZdView(ZdModel model) {
 		this.model = model;
@@ -46,7 +64,7 @@ public class ZdView extends JPanel implements ActionListener, Observer {
 		Component verticalStrut_4 = Box.createVerticalStrut(20);
 		verticalBox.add(verticalStrut_4);
 
-		JLabel lblNumbersystem = new JLabel("Numbersystem 1-36");
+	
 		lblNumbersystem.setAlignmentX(Component.CENTER_ALIGNMENT);
 		verticalBox.add(lblNumbersystem);
 
@@ -73,6 +91,12 @@ public class ZdView extends JPanel implements ActionListener, Observer {
 		Component verticalStrut = Box.createVerticalStrut(20);
 		verticalBox_1.add(verticalStrut);
 
+		Component horizontalStrut_7 = Box.createHorizontalStrut(20);
+		horizontalStrut_7.setPreferredSize(new Dimension(350, 0));
+		horizontalStrut_7.setMinimumSize(new Dimension(400, 0));
+		horizontalStrut_7.setMaximumSize(new Dimension(400, 0));
+		verticalBox_1.add(horizontalStrut_7);
+
 		Box horizontalBox_2 = Box.createHorizontalBox();
 		verticalBox_1.add(horizontalBox_2);
 
@@ -84,6 +108,9 @@ public class ZdView extends JPanel implements ActionListener, Observer {
 
 		horizontalBox_2.add(inputsystem);
 		inputsystem.setColumns(4);
+
+		Component horizontalGlue = Box.createHorizontalGlue();
+		horizontalBox_2.add(horizontalGlue);
 
 		Component horizontalStrut_4 = Box.createHorizontalStrut(20);
 		horizontalBox.add(horizontalStrut_4);
@@ -132,7 +159,10 @@ public class ZdView extends JPanel implements ActionListener, Observer {
 		outputsystem.setMaximumSize(new Dimension(40, 2147483647));
 
 		horizontalBox_4.add(outputsystem);
-		outputsystem.setColumns(10);
+		outputsystem.setColumns(4);
+
+		Component horizontalGlue_1 = Box.createHorizontalGlue();
+		horizontalBox_4.add(horizontalGlue_1);
 
 		Component verticalStrut_2 = Box.createVerticalStrut(20);
 		verticalBox.add(verticalStrut_2);
@@ -141,7 +171,99 @@ public class ZdView extends JPanel implements ActionListener, Observer {
 		verticalBox.add(horizontalBox_5);
 
 		btnClear.addActionListener(this);
+
+		Component horizontalGlue_2 = Box.createHorizontalGlue();
+		horizontalBox_5.add(horizontalGlue_2);
 		horizontalBox_5.add(btnClear);
+
+		Component verticalStrut_5 = Box.createVerticalStrut(20);
+		verticalStrut_5.setPreferredSize(new Dimension(0, 80));
+		verticalStrut_5.setMaximumSize(new Dimension(32767, 80));
+		verticalBox.add(verticalStrut_5);
+
+		lblModularePotenz.setAlignmentX(Component.CENTER_ALIGNMENT);
+		verticalBox.add(lblModularePotenz);
+
+		Component verticalStrut_6 = Box.createVerticalStrut(20);
+		verticalBox.add(verticalStrut_6);
+
+		Box horizontalBox_6 = Box.createHorizontalBox();
+		verticalBox.add(horizontalBox_6);
+
+		horizontalBox_6.add(lblA);
+
+		Component horizontalStrut_8 = Box.createHorizontalStrut(20);
+		horizontalBox_6.add(horizontalStrut_8);
+
+		a.setMaximumSize(new Dimension(100, 2147483647));
+		horizontalBox_6.add(a);
+		a.setColumns(10);
+
+		Component horizontalStrut_9 = Box.createHorizontalStrut(20);
+		horizontalBox_6.add(horizontalStrut_9);
+
+		horizontalBox_6.add(lblN);
+
+		Component horizontalStrut_10 = Box.createHorizontalStrut(20);
+		horizontalBox_6.add(horizontalStrut_10);
+
+		n.setMaximumSize(new Dimension(100, 2147483647));
+		horizontalBox_6.add(n);
+		n.setColumns(10);
+
+		Component horizontalStrut_11 = Box.createHorizontalStrut(20);
+		horizontalBox_6.add(horizontalStrut_11);
+
+		horizontalBox_6.add(lblModM);
+
+		Component horizontalStrut_12 = Box.createHorizontalStrut(20);
+		horizontalBox_6.add(horizontalStrut_12);
+
+		m.setMaximumSize(new Dimension(100, 2147483647));
+		horizontalBox_6.add(m);
+		m.setColumns(10);
+
+		Component horizontalStrut_15 = Box.createHorizontalStrut(20);
+		horizontalBox_6.add(horizontalStrut_15);
+
+		btnis.addActionListener(this);
+		horizontalBox_6.add(btnis);
+
+		Component horizontalStrut_13 = Box.createHorizontalStrut(20);
+		horizontalBox_6.add(horizontalStrut_13);
+
+		horizontalBox_6.add(lblAnmodm);
+
+		Component horizontalStrut_14 = Box.createHorizontalStrut(20);
+		horizontalBox_6.add(horizontalStrut_14);
+
+		result.setEditable(false);
+		result.setMaximumSize(new Dimension(100, 2147483647));
+		horizontalBox_6.add(result);
+		result.setColumns(10);
+
+		Component horizontalGlue_3 = Box.createHorizontalGlue();
+		horizontalBox_6.add(horizontalGlue_3);
+
+		Component verticalStrut_7 = Box.createVerticalStrut(20);
+		verticalBox.add(verticalStrut_7);
+
+		Box horizontalBox_7 = Box.createHorizontalBox();
+		horizontalBox_7.setAlignmentX(Component.LEFT_ALIGNMENT);
+		verticalBox.add(horizontalBox_7);
+
+		Component horizontalStrut_17 = Box.createHorizontalStrut(20);
+		horizontalStrut_17.setMaximumSize(new Dimension(63, 32767));
+		horizontalBox_7.add(horizontalStrut_17);
+
+		horizontalBox_7.add(lblControlValue);
+
+		Component horizontalStrut_16 = Box.createHorizontalStrut(20);
+		horizontalBox_7.add(horizontalStrut_16);
+
+		controlresult.setMaximumSize(new Dimension(86, 2147483647));
+		horizontalBox_7.add(controlresult);
+		controlresult.setColumns(10);
 	}
 
 	@Override
@@ -222,6 +344,9 @@ public class ZdView extends JPanel implements ActionListener, Observer {
 		}
 		if (e.getSource() == btnClear) {
 			clear();
+		}
+		if(e.getSource() == btnis ){
+			System.out.println("hallo welt");
 		}
 	}
 

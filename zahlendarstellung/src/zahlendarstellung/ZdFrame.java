@@ -18,7 +18,7 @@ public class ZdFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
 
 	public ZdFrame() {
-		super("Cryptography: Caesar and Vigenere");
+		super("Zahlendarstellung und Modulare Potenz");
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				System.exit(0);
@@ -34,7 +34,7 @@ public class ZdFrame extends JFrame {
 		 */
 		Dimension screenSize = new Dimension(Toolkit.getDefaultToolkit()
 				.getScreenSize());
-		setPreferredSize(new Dimension(900, 450));
+		setPreferredSize(new Dimension(900, 400));
 		Dimension windowSize = new Dimension(getPreferredSize());
 		int wdwLeft = screenSize.width / 2 - windowSize.width / 2;
 		int wdwTop = screenSize.height / 2 - windowSize.height / 2;
