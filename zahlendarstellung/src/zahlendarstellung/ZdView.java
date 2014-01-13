@@ -269,6 +269,7 @@ public class ZdView extends JPanel implements ActionListener, Observer {
 		inputnumber.setText(model.getInputnumber());
 		outputsystem.setText(model.getOutputsystem() + "");
 		inputsystem.setText(model.getInputsystem() + "");
+		result.setText(model.getModPot() + "");
 	}
 
 	public void clear() {
@@ -280,6 +281,8 @@ public class ZdView extends JPanel implements ActionListener, Observer {
 		model.setOutputnumber("0");
 		outputsystem.setText("");
 		model.setOutputsystem(0);
+		result.setText("");
+		model.setModPot(0);
 	}
 
 	public void readInput() throws NoInputFoundException {
@@ -343,7 +346,20 @@ public class ZdView extends JPanel implements ActionListener, Observer {
 			clear();
 		}
 		if (e.getSource() == btnis) {
-			System.out.println("hallo welt");
+			try {
+				model.setModPot(model.runModPot(
+						Integer.parseInt(m.getText()),
+						Integer.parseInt(a.getText()),
+						model.stringReverse(model.transformFromTen(
+								Integer.parseInt(n.getText()), 2))));
+
+			} catch (NumberFormatException e1) {
+				e1.printStackTrace();
+			} catch (ToBigSystemException e1) {
+				e1.printStackTrace();
+			} catch (ToSmallSystemException e1) {
+				e1.printStackTrace();
+			}
 		}
 	}
 

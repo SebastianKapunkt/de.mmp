@@ -12,6 +12,15 @@ public class ZdModel extends Observable {
 	private String outputnumber, inputnumber;
 	private int inputsystem, outputsystem;
 	private int number[];
+	private int modPot;
+
+	public int getModPot() {
+		return modPot;
+	}
+
+	public void setModPot(int modPot) {
+		this.modPot = modPot;
+	}
 
 	public String getOutputnumber() {
 		return outputnumber;
@@ -176,5 +185,55 @@ public class ZdModel extends Observable {
 			symbol = (char) (i + 48);
 		}
 		return symbol;
+	}
+
+	// MODULARE POTENZ FUNKTIONEN
+	/**
+	 * Invertiert einen String.
+	 * 
+	 * @param binExp
+	 * @return String.reverse
+	 */
+	public String stringReverse(String binExp) {
+		StringBuilder revbinExp = new StringBuilder();
+		for (int i = 0; i < binExp.length(); i++) {
+			revbinExp.append(binExp.charAt(i));
+		}
+		return revbinExp.reverse().toString();
+	}
+
+	
+	//Wie läuft die Abgabe des letzten Programms?
+	
+	/**
+	 * Berechnet die Modulare Potenz
+	 * @param m
+	 * @param b
+	 * @param binExp
+	 * @return Ergebnis
+	 */
+	public int runModPot(int m, int b, String binExp) {
+		int[] erg = new int[binExp.length() + 1];
+		int[] fak = new int[binExp.length() + 1];
+		erg[0] = 1;
+		fak[0] = b;
+
+		for (int i = 0; i < binExp.length(); i++) {
+			if (i == 0) {
+				fak[i + 1] = fak[i];
+			} else {
+				fak[i + 1] = (int) Math.pow(fak[i], 2) % m;
+			}
+			if (binExp.charAt(i) == '0') {
+				erg[i + 1] = erg[i];
+			} else {
+				erg[i + 1] = erg[i] * fak[i + 1] % m;
+			}
+		}
+		
+		setChanged();
+		notifyObservers();
+		
+		return erg[binExp.length()];
 	}
 }
