@@ -34,13 +34,12 @@ public class ZdView extends JPanel implements ActionListener, Observer {
 	private JTextField m = new JTextField();
 	private JTextField result = new JTextField();
 
-	JLabel lblNumbersystem = new JLabel(
-			"Numbersystem 2-36 for Integer numbers");
+	JLabel lblNumbersystem = new JLabel("Numbersystem 2-36 for Integer numbers");
 	JLabel inNuLabel = new JLabel("input Number:");
 	JLabel inSyLabel = new JLabel("input System: ");
 	JLabel ouNuLabel = new JLabel("output Number:");
 	JLabel ouSyLabel = new JLabel("output System:");
-	
+
 	JLabel lblModularePotenz = new JLabel("Modulare Potenz");
 	JLabel lblA = new JLabel("a ");
 	JLabel lblN = new JLabel("n ");
@@ -50,9 +49,8 @@ public class ZdView extends JPanel implements ActionListener, Observer {
 
 	JButton btnConvert = new JButton("convert");
 	JButton btnClear = new JButton("clear");
-	
-	JButton btnis = new JButton("=");
 
+	JButton btnis = new JButton("=");
 
 	public ZdView(ZdModel model) {
 		this.model = model;
@@ -64,7 +62,6 @@ public class ZdView extends JPanel implements ActionListener, Observer {
 		Component verticalStrut_4 = Box.createVerticalStrut(20);
 		verticalBox.add(verticalStrut_4);
 
-	
 		lblNumbersystem.setAlignmentX(Component.CENTER_ALIGNMENT);
 		verticalBox.add(lblNumbersystem);
 
@@ -305,9 +302,9 @@ public class ZdView extends JPanel implements ActionListener, Observer {
 				readInput();
 				model.setNumber(model.transformToArray(model.getInputnumber()));
 				model.checknumber(model.getInputsystem());
-				model.transformFromTen(
+				model.setOutputnumber(model.transformFromTen(
 						model.transformToTen(model.getInputsystem()),
-						model.getOutputsystem());
+						model.getOutputsystem()));
 			} catch (WrongInputException e1) {
 				JOptionPane.showMessageDialog(this,
 						"Eingabefelder enthalten ungültige Zeichen",
@@ -345,7 +342,7 @@ public class ZdView extends JPanel implements ActionListener, Observer {
 		if (e.getSource() == btnClear) {
 			clear();
 		}
-		if(e.getSource() == btnis ){
+		if (e.getSource() == btnis) {
 			System.out.println("hallo welt");
 		}
 	}

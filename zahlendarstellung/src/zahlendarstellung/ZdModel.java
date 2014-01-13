@@ -142,7 +142,7 @@ public class ZdModel extends Observable {
 	 * @throws ToBigSystemException
 	 * @throws ToSmallSystemException
 	 */
-	public void transformFromTen(int number, int outputnumbersystem)
+	public String transformFromTen(int number, int outputnumbersystem)
 			throws ToBigSystemException, ToSmallSystemException {
 		StringBuffer outnumber = new StringBuffer();
 		if (outputnumbersystem > 36) {
@@ -156,10 +156,10 @@ public class ZdModel extends Observable {
 			outnumber.append(convertToSymbol(number % outputnumbersystem));
 			number = number / outputnumbersystem;
 		}
-
-		outputnumber = outnumber.reverse().toString();
 		setChanged();
 		notifyObservers();
+
+		return outnumber.reverse().toString();
 	}
 
 	/**
@@ -168,7 +168,7 @@ public class ZdModel extends Observable {
 	 * @param i
 	 * @return umgewandeltes Zeichen
 	 */
-	public static char convertToSymbol(int i) {
+	private char convertToSymbol(int i) {
 		char symbol;
 		if (i > 9) {
 			symbol = (char) (i + 55);
