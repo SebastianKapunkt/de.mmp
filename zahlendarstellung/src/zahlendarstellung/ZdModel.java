@@ -1,9 +1,16 @@
+/** @author:
+ * Eric Dobritius 	 20110009
+ * Gordan Just		 20091313 
+ * Sebastian Kindt 	 20120023
+ * 
+ * @version: 1.0
+ */
 package zahlendarstellung;
 
 import java.util.Observable;
 
-import exceptions.ToBigSystemException;
-import exceptions.ToSmallSystemException;
+import exceptions.TooBigSystemException;
+import exceptions.TooSmallSystemException;
 import exceptions.ValueToBigException;
 import exceptions.WrongInputException;
 import exceptions.WrongNumberInputException;
@@ -12,7 +19,31 @@ public class ZdModel extends Observable {
 	private String outputnumber, inputnumber;
 	private int inputsystem, outputsystem;
 	private int number[];
-	private int modPot;
+	private int modPot, a, n, m;
+
+	public int getA() {
+		return a;
+	}
+
+	public void setA(int a) {
+		this.a = a;
+	}
+
+	public int getN() {
+		return n;
+	}
+
+	public void setN(int n) {
+		this.n = n;
+	}
+
+	public int getM() {
+		return m;
+	}
+
+	public void setM(int m) {
+		this.m = m;
+	}
 
 	public int getModPot() {
 		return modPot;
@@ -20,6 +51,8 @@ public class ZdModel extends Observable {
 
 	public void setModPot(int modPot) {
 		this.modPot = modPot;
+		setChanged();
+		notifyObservers();
 	}
 
 	public String getOutputnumber() {
@@ -28,6 +61,8 @@ public class ZdModel extends Observable {
 
 	public void setOutputnumber(String outputnumber) {
 		this.outputnumber = outputnumber;
+		setChanged();
+		notifyObservers();
 	}
 
 	public int[] getNumber() {
@@ -67,7 +102,7 @@ public class ZdModel extends Observable {
 	}
 
 	/**
-	 * Zerlegt die ausgangs Zahl in ein Integer-Array und meldet ungültige
+	 * Zerlegt die ausgangs Zahl(String) in ein Integer-Array und meldet ungültige
 	 * Zeichen. z.B.: &, % oder = --> Error
 	 * 
 	 * Als Rückgabe wird ein int Array, gefüllt mit den umgewandelten Werten ,
@@ -99,24 +134,24 @@ public class ZdModel extends Observable {
 	/**
 	 * Überprüft das Array mit dem inhalt der einzelnen Zeichen der Zahl ob
 	 * Zeichen enthalten sind die in dem System nicht zulässig sind. Und wirft
-	 * bei bedarf einen Error
+	 * bei bedarf eine Exception.
 	 * 
 	 * @param inputsystem
 	 * @throws WrongNumberInputException
-	 * @throws ToBigSystemException
-	 * @throws ToSmallSystemException
+	 * @throws TooBigSystemException
+	 * @throws TooSmallSystemException
 	 */
 	public void checknumber(int inputsystem) throws WrongNumberInputException,
-			ToBigSystemException, ToSmallSystemException {
+			TooBigSystemException, TooSmallSystemException {
 		for (int i = 0; i < number.length; i++) {
 			if (number[i] >= inputsystem) {
 				throw new WrongNumberInputException();
 			}
 			if (inputsystem > 36) {
-				throw new ToBigSystemException();
+				throw new TooBigSystemException();
 			}
 			if (inputsystem < 2) {
-				throw new ToSmallSystemException();
+				throw new TooSmallSystemException();
 			}
 		}
 	}
@@ -130,7 +165,7 @@ public class ZdModel extends Observable {
 	 * @return Zahl im Zehnersystem
 	 * @throws ValueToBigException
 	 */
-	public int transformToTen(int inputnumbersystem) throws ValueToBigException {
+	public int toDecimalSystem(int inputnumbersystem) throws ValueToBigException {
 		long erg = number[0];
 		for (int i = 1; i < number.length; i++) {
 			erg = erg * inputnumbersystem + number[i];
@@ -146,29 +181,33 @@ public class ZdModel extends Observable {
 	 * System. z.B.: 16 zu 10000 (2er)
 	 * 
 	 * @param number
-	 * @param outputnumbersystem
+	 * @param outputNumberSystem
 	 * @return Zielsystem Zahl
-	 * @throws ToBigSystemException
-	 * @throws ToSmallSystemException
+	 * @throws TooBigSystemException
+	 * @throws TooSmallSystemException
 	 */
-	public String transformFromTen(int number, int outputnumbersystem)
-			throws ToBigSystemException, ToSmallSystemException {
-		StringBuffer outnumber = new StringBuffer();
-		if (outputnumbersystem > 36) {
-			throw new ToBigSystemException();
+	public String fromDecimalSystem(int number, int outputNumberSystem)
+			throws TooBigSystemException, TooSmallSystemException {
+		StringBuffer outNumber = new StringBuffer();
+		
+		if (outputNumberSystem > 36) {
+			throw new TooBigSystemException();
 		}
-		if (outputnumbersystem < 2) {
-			throw new ToSmallSystemException();
+		if (outputNumberSystem < 2) {
+			throw new TooSmallSystemException();
 		}
 
-		while (number != 0) {
-			outnumber.append(convertToSymbol(number % outputnumbersystem));
-			number = number / outputnumbersystem;
-		}
-		setChanged();
-		notifyObservers();
+		if (number == 0) {
+			outNumber.append('0');
+		} else {
 
-		return outnumber.reverse().toString();
+			while (number != 0) {
+				outNumber.append(convertToSymbol(number % outputNumberSystem));
+				number = number / outputNumberSystem;
+			}
+
+		}
+		return outNumber.reverse().toString();
 	}
 
 	/**
@@ -202,38 +241,43 @@ public class ZdModel extends Observable {
 		return revbinExp.reverse().toString();
 	}
 
-	
-	//Wie läuft die Abgabe des letzten Programms?
-	
 	/**
 	 * Berechnet die Modulare Potenz
-	 * @param m
-	 * @param b
-	 * @param binExp
+	 * 
+	 * @param modulo
+	 * @param base
+	 * @param binaryExponent
 	 * @return Ergebnis
+	 * @throws WrongInputException
+	 * @throws ValueToBigException
+	 * @return Modulare Potenz
 	 */
-	public int runModPot(int m, int b, String binExp) {
-		int[] erg = new int[binExp.length() + 1];
-		int[] fak = new int[binExp.length() + 1];
-		erg[0] = 1;
-		fak[0] = b;
+	public int modularePotenz(int modulo, int base, String binaryExponent)
+			throws WrongInputException, ValueToBigException {
+		int[] potenzValues = new int[binaryExponent.length() + 1];
+		int[] factors = new int[binaryExponent.length() + 1];
+		potenzValues[0] = 1;
+		factors[0] = base;
 
-		for (int i = 0; i < binExp.length(); i++) {
-			if (i == 0) {
-				fak[i + 1] = fak[i];
-			} else {
-				fak[i + 1] = (int) Math.pow(fak[i], 2) % m;
-			}
-			if (binExp.charAt(i) == '0') {
-				erg[i + 1] = erg[i];
-			} else {
-				erg[i + 1] = erg[i] * fak[i + 1] % m;
+		if (base < 0 || modulo <= 0 || n < 0) {
+			throw new WrongInputException();
+		} else {
+			for (int i = 0; i < binaryExponent.length(); i++) {
+				if (i == 0) {
+					factors[i + 1] = factors[i];
+				} else if ((long) Math.pow(factors[i], 2) > Integer.MAX_VALUE) {
+					throw new ValueToBigException();
+				} else {
+					factors[i + 1] = (int) Math.pow(factors[i], 2) % modulo;
+				}
+				if (binaryExponent.charAt(i) == '0') {
+					potenzValues[i + 1] = potenzValues[i];
+				} else {
+					potenzValues[i + 1] = potenzValues[i] * factors[i + 1] % modulo;
+				}
 			}
 		}
-		
-		setChanged();
-		notifyObservers();
-		
-		return erg[binExp.length()];
+
+		return potenzValues[binaryExponent.length()];
 	}
 }

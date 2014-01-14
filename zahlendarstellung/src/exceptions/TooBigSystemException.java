@@ -1,12 +1,12 @@
 package exceptions;
 
-public class ToBigSystemException extends Exception {
+public class TooBigSystemException extends Exception {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public ToBigSystemException() {
+	public TooBigSystemException() {
 		super("Zahlensystem ist zu groﬂ");
 	}
 }

@@ -1,3 +1,10 @@
+/** @author:
+ * Eric Dobritius 	 20110009
+ * Gordan Just		 20091313 
+ * Sebastian Kindt 	 20120023
+ * 
+ * @version: 1.0
+ */
 package zahlendarstellung;
 
 import java.awt.*;
@@ -8,8 +15,8 @@ import java.util.Observer;
 import javax.swing.*;
 
 import exceptions.NoInputFoundException;
-import exceptions.ToBigSystemException;
-import exceptions.ToSmallSystemException;
+import exceptions.TooBigSystemException;
+import exceptions.TooSmallSystemException;
 import exceptions.ValueToBigException;
 import exceptions.WrongInputException;
 import exceptions.WrongNumberInputException;
@@ -26,9 +33,7 @@ public class ZdView extends JPanel implements ActionListener, Observer {
 	private JTextField inputnumber = new JTextField();;
 	private JTextField inputsystem = new JTextField();;
 	private JTextField outputnumber = new JTextField();;
-	private JTextField outputsystem = new JTextField();;
-
-	private JTextField controlresult = new JTextField();
+	private JTextField outputsystem = new JTextField();
 	private JTextField a = new JTextField();
 	private JTextField n = new JTextField();
 	private JTextField m = new JTextField();
@@ -45,12 +50,13 @@ public class ZdView extends JPanel implements ActionListener, Observer {
 	JLabel lblN = new JLabel("n ");
 	JLabel lblModM = new JLabel("mod m");
 	JLabel lblAnmodm = new JLabel("a^n mod m");
-	JLabel lblControlValue = new JLabel("control Value");
 
 	JButton btnConvert = new JButton("convert");
 	JButton btnClear = new JButton("clear");
 
 	JButton btnis = new JButton("=");
+
+	boolean isMod = false;
 
 	public ZdView(ZdModel model) {
 		this.model = model;
@@ -242,9 +248,6 @@ public class ZdView extends JPanel implements ActionListener, Observer {
 		Component horizontalGlue_3 = Box.createHorizontalGlue();
 		horizontalBox_6.add(horizontalGlue_3);
 
-		Component verticalStrut_7 = Box.createVerticalStrut(20);
-		verticalBox.add(verticalStrut_7);
-
 		Box horizontalBox_7 = Box.createHorizontalBox();
 		horizontalBox_7.setAlignmentX(Component.LEFT_ALIGNMENT);
 		verticalBox.add(horizontalBox_7);
@@ -252,40 +255,39 @@ public class ZdView extends JPanel implements ActionListener, Observer {
 		Component horizontalStrut_17 = Box.createHorizontalStrut(20);
 		horizontalStrut_17.setMaximumSize(new Dimension(63, 32767));
 		horizontalBox_7.add(horizontalStrut_17);
-
-		horizontalBox_7.add(lblControlValue);
-
-		Component horizontalStrut_16 = Box.createHorizontalStrut(20);
-		horizontalBox_7.add(horizontalStrut_16);
-
-		controlresult.setMaximumSize(new Dimension(86, 2147483647));
-		horizontalBox_7.add(controlresult);
-		controlresult.setColumns(10);
 	}
 
 	@Override
 	public void update(Observable arg0, Object arg1) {
-		outputnumber.setText(model.getOutputnumber());
-		inputnumber.setText(model.getInputnumber());
-		outputsystem.setText(model.getOutputsystem() + "");
-		inputsystem.setText(model.getInputsystem() + "");
-		result.setText(model.getModPot() + "");
+		if (isMod) {
+			result.setText(model.getModPot() + "");
+		} else {
+			outputnumber.setText(model.getOutputnumber());
+			inputnumber.setText(model.getInputnumber());
+			outputsystem.setText(model.getOutputsystem() + "");
+			inputsystem.setText(model.getInputsystem() + "");
+		}
+
 	}
 
 	public void clear() {
 		inputnumber.setText("");
-		model.setInputnumber("0");
+		model.setInputnumber("");
 		inputsystem.setText("");
 		model.setInputsystem(0);
 		outputnumber.setText("");
-		model.setOutputnumber("0");
+		model.setOutputnumber("");
 		outputsystem.setText("");
 		model.setOutputsystem(0);
+
 		result.setText("");
 		model.setModPot(0);
+		a.setText("");
+		n.setText("");
+		m.setText("");
 	}
 
-	public void readInput() throws NoInputFoundException {
+	public void readInputZd() throws NoInputFoundException {
 		if (inputnumber.getText().equals("")
 				|| inputsystem.getText().equals("")
 				|| outputsystem.getText().equals("")) {
@@ -297,16 +299,28 @@ public class ZdView extends JPanel implements ActionListener, Observer {
 		}
 	}
 
+	public void readInputMo() throws NoInputFoundException {
+		if (a.getText().equals("") || n.getText().equals("")
+				|| m.getText().equals("")) {
+			throw new NoInputFoundException();
+		} else {
+			model.setA(Integer.parseInt(a.getText()));
+			model.setN(Integer.parseInt(n.getText()));
+			model.setM(Integer.parseInt(m.getText()));
+		}
+	}
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == btnConvert) {
 			try {
+				isMod = false;
 				outputnumber.setText("");
-				readInput();
+				readInputZd();
 				model.setNumber(model.transformToArray(model.getInputnumber()));
 				model.checknumber(model.getInputsystem());
-				model.setOutputnumber(model.transformFromTen(
-						model.transformToTen(model.getInputsystem()),
+				model.setOutputnumber(model.fromDecimalSystem(
+						model.toDecimalSystem(model.getInputsystem()),
 						model.getOutputsystem()));
 			} catch (WrongInputException e1) {
 				JOptionPane.showMessageDialog(this,
@@ -316,7 +330,7 @@ public class ZdView extends JPanel implements ActionListener, Observer {
 				JOptionPane.showMessageDialog(this,
 						"Ausgangs Zahl enthält zu große Werte",
 						"Eingabefehler", JOptionPane.ERROR_MESSAGE);
-			} catch (ToBigSystemException e1) {
+			} catch (TooBigSystemException e1) {
 				JOptionPane.showMessageDialog(this,
 						"Zahlensystem ist zu groß gewählt", "Eingabefehler",
 						JOptionPane.ERROR_MESSAGE);
@@ -324,7 +338,7 @@ public class ZdView extends JPanel implements ActionListener, Observer {
 				JOptionPane.showMessageDialog(this,
 						"Wert überschreitet wertebereich von Integer",
 						"To Big Value", JOptionPane.ERROR_MESSAGE);
-			} catch (ToSmallSystemException e1) {
+			} catch (TooSmallSystemException e1) {
 				JOptionPane
 						.showMessageDialog(
 								this,
@@ -347,18 +361,30 @@ public class ZdView extends JPanel implements ActionListener, Observer {
 		}
 		if (e.getSource() == btnis) {
 			try {
-				model.setModPot(model.runModPot(
-						Integer.parseInt(m.getText()),
-						Integer.parseInt(a.getText()),
-						model.stringReverse(model.transformFromTen(
-								Integer.parseInt(n.getText()), 2))));
-
+				isMod = true;
+				result.setText("");
+				readInputMo();
+				model.setModPot(model.modularePotenz(model.getM(), model.getA(),
+						model.stringReverse(model.fromDecimalSystem(
+								model.getN(), 2))));
 			} catch (NumberFormatException e1) {
 				e1.printStackTrace();
-			} catch (ToBigSystemException e1) {
+				JOptionPane.showMessageDialog(this,
+						"Inputfelder enthalen keine ganze Zahl",
+						"Eingabefehler", JOptionPane.ERROR_MESSAGE);
+			} catch (TooBigSystemException e1) {
 				e1.printStackTrace();
-			} catch (ToSmallSystemException e1) {
+			} catch (TooSmallSystemException e1) {
 				e1.printStackTrace();
+			} catch (WrongInputException e1) {
+				JOptionPane.showMessageDialog(this, "Negative Zahlen und Null sind fehlerhafte Eingaben",
+						"Eingabefehler", JOptionPane.ERROR_MESSAGE);
+			} catch (ValueToBigException e1) {
+				JOptionPane.showMessageDialog(this, "Zahlenüberlauf",
+						"Eingabefehler", JOptionPane.ERROR_MESSAGE);
+			} catch (NoInputFoundException e1) {
+				JOptionPane.showMessageDialog(this, "Eingabefelder sind leer",
+						"Eingabefehler", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
